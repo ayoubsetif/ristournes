@@ -1,2 +1,20 @@
+<input hidden type='file' #btn accept=".xlsx" (change)="uploadConfigFile($event)">
+<button
+	mat-raised-button
+	color="primary"
+	(click)="btn.click()"
+>Import Config File</button>
 
+<input hidden  type='file' #dmsbtn accept=".xlsx" (change)="uploadFile($event)">
+<button mat-raised-button color="primary" (click)="dmsbtn.click()">Import Document Listing</button>
 
+<display-products
+	*ngIf="realizationByCat.length"
+	[products]="realizationByCat"
+></display-products>
+
+<realisation-prod
+	*ngIf="realizationByProd.length"
+	[products]="realizationByProd"
+>
+</realisation-prod>

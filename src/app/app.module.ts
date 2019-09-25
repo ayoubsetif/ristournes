@@ -8,11 +8,17 @@ import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatSelectModule } from '@angular/material/select';
 import { MatTableModule } from '@angular/material/table';
 
+import { NgMathPipesModule } from 'ngx-pipes';
+
 import { AppComponent } from './app.component';
+import { DisplayProductsComponent } from './display-products/display-products.component';
+import { RealisationProdComponent } from './realisation-prod/realisation-prod.component';
 
 @NgModule({
 	declarations: [
-		AppComponent
+		AppComponent,
+		DisplayProductsComponent,
+		RealisationProdComponent
 	],
 	imports: [
 		BrowserModule,
@@ -22,6 +28,7 @@ import { AppComponent } from './app.component';
 		MatFormFieldModule,
 		MatSelectModule,
 		MatTableModule,
+		NgMathPipesModule
 	],
 	providers: [],
 	bootstrap: [AppComponent]
