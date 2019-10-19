@@ -1,0 +1,18 @@
+table {
+	width: 100%;
+}
+
+.red-back {
+	background-color: #c74343;
+}
+
+.green-back {
+	background-color: #429642;
+}
+
+td.mat-cell {
+	text-align: center;
+}
+td.mat-cell:first-of-type {
+	text-align: start;
+}

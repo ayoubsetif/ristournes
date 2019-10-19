@@ -13,12 +13,14 @@ import { NgMathPipesModule } from 'ngx-pipes';
 import { AppComponent } from './app.component';
 import { DisplayProductsComponent } from './display-products/display-products.component';
 import { RealisationProdComponent } from './realisation-prod/realisation-prod.component';
+import { AvgSkuComponent } from './avg-sku/avg-sku.component';
 
 @NgModule({
 	declarations: [
 		AppComponent,
 		DisplayProductsComponent,
-		RealisationProdComponent
+		RealisationProdComponent,
+		AvgSkuComponent
 	],
 	imports: [
 		BrowserModule,

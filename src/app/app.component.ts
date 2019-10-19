@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, ComponentFactoryResolver } from '@angular/core';
 import { MatSnackBar } from '@angular/material';
 import { ExcelManipulationService } from './app-services/excel-manipulation.service';
 import * as XLSX from 'xlsx';
@@ -15,6 +15,9 @@ export class AppComponent {
 	category = [];
 	realizationByCat = [];
 	realizationByProd = [];
+	data = [];
+	displayTab = [ false, false, false ];
+	avgSKU = [];
 
 	constructor(
 		private snackBar: MatSnackBar,
@@ -65,53 +68,88 @@ export class AppComponent {
 				const worksheet = this.excelService.readFile(fileReader);
 				const arr = XLSX.utils.sheet_to_json(worksheet, {raw: true });
 				const data = [];
-				const listingByProduct = [];
-
+				// console.log('eee', _.drop(arr, 12));
 				_.drop(arr, 12).forEach(sale => {
 					if (sale[''] !== '') {
 						data.push({
 							id: sale['_6'],
 							name: sale['_7'],
-							quantity: this.getQuantity(sale['_6'], sale['__EMPTY_9'], sale['__EMPTY_10'] )
+							quantity: this.getQuantity(sale['_6'], sale['__EMPTY_9'], sale['__EMPTY_10'] ),
+							vendor: sale['_9'],
+							salesmanType: sale['_12'],
+							transaction: sale['_4'],
+							transactionType: sale['_3']
 						});
 					}
 				});
-
-				Object.keys(_.groupBy(data, 'id')).map(m => {
-
-					const aon = _.groupBy(data, 'id')[m].map(q => q['quantity']);
-					const sum = _.reduce(aon, function(a, b) { return a + b; }, 0);
-
-					listingByProduct.push({
-						id: _.groupBy(data, 'id')[m][0]['id'],
-						name: _.groupBy(data, 'id')[m][0]['name'],
-						quantity: sum,
-						ttc: this.getTTCPrice(_.groupBy(data, 'id')[m][0]['id'], sum),
-						ht: this.getHTPrice(_.groupBy(data, 'id')[m][0]['id'], sum)
-					});
-				});
-
-				this.realizationByProd = listingByProduct;
-				console.log('real prod', this.realizationByProd);
-
-				const realization = [];
-				this.category.push({ name: 'nan3+guig3+Junior', products: [ '12397003', '12305319', '12282718', '12381799'] });
-				this.category.forEach(cat => {
-					const r = { name: cat['name'], products: [], totalHT: 0, totalTTC: 0 };
-					cat['products'].forEach(pr => {
-						const found = listingByProduct.filter(f => f['id'] === pr);
-						if (found && found.length) { r['products'].push(found[0]);	}
-					});
-					r['totalTTC'] = _.reduce(r['products'].map(m => m['ttc']), function(a, b) { return a + b; }, 0);
-					r['totalHT'] = _.reduce(r['products'].map(m => m['ht']), function(a, b) { return a + b; }, 0);
-					realization.push(r);
-				});
-				this.realizationByCat = realization;
-				console.log('real', this.realizationByCat);
-
+				this.data = data;
 			};
 			fileReader.readAsArrayBuffer(this.file);
 		}
+	}
+
+	displayAchievementByProd() {
+		this.displayTab = [false, true, false];
+	}
+
+	displayAchievementByCat() {
+		const data =	JSON.parse(JSON.stringify(this.data));
+		const listingByProduct = [];
+
+		Object.keys(_.groupBy(data, 'id')).map(m => {
+
+			const aon = _.groupBy(data, 'id')[m].map(q => q['quantity']);
+			const sum = _.reduce(aon, function(a, b) { return a + b; }, 0);
+
+			listingByProduct.push({
+				id: _.groupBy(data, 'id')[m][0]['id'],
+				name: _.groupBy(data, 'id')[m][0]['name'],
+				quantity: sum,
+				ttc: this.getTTCPrice(_.groupBy(data, 'id')[m][0]['id'], sum),
+				ht: this.getHTPrice(_.groupBy(data, 'id')[m][0]['id'], sum)
+			});
+		});
+
+		this.realizationByProd = listingByProduct;
+		console.log('real prod', this.realizationByProd);
+
+		const realization = [];
+		this.category.push({ name: 'nan3+guig3+Junior', products: [ '12397003', '12305319', '12282718', '12381799'] });
+		this.category.forEach(cat => {
+			const r = { name: cat['name'], products: [], totalHT: 0, totalTTC: 0 };
+			cat['products'].forEach(pr => {
+				const found = listingByProduct.filter(f => f['id'] === pr);
+				if (found && found.length) { r['products'].push(found[0]);	}
+			});
+			r['totalTTC'] = _.reduce(r['products'].map(m => m['ttc']), function(a, b) { return a + b; }, 0);
+			r['totalHT'] = _.reduce(r['products'].map(m => m['ht']), function(a, b) { return a + b; }, 0);
+			realization.push(r);
+		});
+		this.realizationByCat = realization;
+		console.log('real', this.realizationByCat);
+
+		this.displayTab = [true, false, false];
+
+	}
+
+	getAVGSKU() {
+		const data =	JSON.parse(JSON.stringify(this.data));
+		const avgSku = [];
+		const groupedByvendor = _.groupBy(data.filter(f => f['transactionType'] === 'Invoice'), 'vendor');
+		Object.keys(groupedByvendor).map(m => {
+			const invoice = _.uniq(groupedByvendor[m].map(k => k['transaction']));
+			avgSku.push({
+				name: m,
+				salesmanType: groupedByvendor[m][0]['salesmanType'],
+				invoice: invoice.length,
+				totalSKU: groupedByvendor[m].length,
+				avg: groupedByvendor[m].length / invoice.length
+			});
+		});
+		console.log('avg', avgSku);
+		this.avgSKU = avgSku;
+
+		this.displayTab = [false, false, true];
 	}
 
 	getQuantity(id, quantity, uom) {

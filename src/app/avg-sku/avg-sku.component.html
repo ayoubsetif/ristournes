@@ -1,0 +1,42 @@
+
+<h3>Average SKU/Invoice</h3>
+
+<mat-form-field>
+	<mat-select (selectionChange)="selectSalesmanType($event)"  placeholder="Choose salesman type">
+		<mat-option *ngFor="let salesman of salesmanType" [value]="salesman.id">
+			{{salesman.name}}
+		</mat-option>
+	</mat-select>
+</mat-form-field>
+
+<table mat-table [dataSource]="tab" class="mat-elevation-z8">
+
+	<!-- totalDocumentSummary Column -->
+	<ng-container matColumnDef="name">
+		<th mat-header-cell *matHeaderCellDef> Name  </th>
+		<td mat-cell *matCellDef="let element"> {{element.name}} </td>
+	</ng-container>
+	
+	<!-- totalSales Column -->
+	<ng-container matColumnDef="invoices">
+		<th mat-header-cell *matHeaderCellDef> Total Factures </th>
+		<td mat-cell  *matCellDef="let element"> {{element.invoice }}</td>
+	</ng-container>
+	
+	<ng-container matColumnDef="skus">
+		<th mat-header-cell *matHeaderCellDef> Total SKU </th>
+		<td mat-cell *matCellDef="let element"> {{element.totalSKU}} </td>
+	</ng-container>
+
+	<ng-container matColumnDef="avg">
+		<th mat-header-cell *matHeaderCellDef> Moyenne </th>
+		<td mat-cell [ngClass]="{'red-back ': element.avg < 3, 'green-back': element.avg > 3 }" *matCellDef="let element"> {{element.avg | floor: 2}} </td>
+	</ng-container>
+	
+	
+	<tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+	<tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
+</table>
+
+
+

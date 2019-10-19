@@ -8,13 +8,38 @@
 <input hidden  type='file' #dmsbtn accept=".xlsx" (change)="uploadFile($event)">
 <button mat-raised-button color="primary" (click)="dmsbtn.click()">Import Document Listing</button>
 
+<button
+	mat-raised-button
+	color="primary"
+	(click)="displayAchievementByCat()"
+	[disabled]="!data.length"
+>Achievement by Category</button>
+
+<button
+	mat-raised-button
+	color="accent"
+	(click)="displayAchievementByProd()"
+	[disabled]="!data.length"
+>Achievement by Product</button>
+
+<button
+	mat-raised-button
+	color="accent"
+	(click)="getAVGSKU()"
+	[disabled]="!data.length"
+>Avg SKU</button>
+
 <display-products
-	*ngIf="realizationByCat.length"
+	*ngIf="realizationByCat.length && displayTab[0]"
 	[products]="realizationByCat"
 ></display-products>
 
 <realisation-prod
-	*ngIf="realizationByProd.length"
+	*ngIf="realizationByProd.length && displayTab[1]"
 	[products]="realizationByProd"
->
-</realisation-prod>
+></realisation-prod>
+
+<avg-sku
+	*ngIf="avgSKU.length && displayTab[2]"
+	[avgSKU]="avgSKU"
+></avg-sku>
