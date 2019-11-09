@@ -70,8 +70,6 @@ THE SOFTWARE.
 
 @angular/material/snack-bar
 
-@angular/material/table
-
 @angular/platform-browser
 MIT
 
