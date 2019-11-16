@@ -7,20 +7,24 @@ import { MatSnackBarModule } from '@angular/material/snack-bar';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatSelectModule } from '@angular/material/select';
 import { MatTableModule } from '@angular/material/table';
-
+import { MatTooltipModule } from '@angular/material/tooltip';
 import { NgMathPipesModule } from 'ngx-pipes';
 
 import { AppComponent } from './app.component';
 import { DisplayProductsComponent } from './display-products/display-products.component';
 import { RealisationProdComponent } from './realisation-prod/realisation-prod.component';
 import { AvgSkuComponent } from './avg-sku/avg-sku.component';
+import { ObjectivesComponent } from './objectives/objectives.component';
+import { ObjectivesDetailsComponent } from './objectives-details/objectives-details.component';
 
 @NgModule({
 	declarations: [
 		AppComponent,
 		DisplayProductsComponent,
 		RealisationProdComponent,
-		AvgSkuComponent
+		AvgSkuComponent,
+		ObjectivesComponent,
+		ObjectivesDetailsComponent
 	],
 	imports: [
 		BrowserModule,
@@ -30,7 +34,8 @@ import { AvgSkuComponent } from './avg-sku/avg-sku.component';
 		MatFormFieldModule,
 		MatSelectModule,
 		MatTableModule,
-		NgMathPipesModule
+		NgMathPipesModule,
+		MatTooltipModule
 	],
 	providers: [],
 	bootstrap: [AppComponent]

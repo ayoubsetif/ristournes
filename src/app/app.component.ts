@@ -3,6 +3,7 @@ import { MatSnackBar } from '@angular/material';
 import { ExcelManipulationService } from './app-services/excel-manipulation.service';
 import * as XLSX from 'xlsx';
 import * as _ from 'lodash';
+import { ReplaySubject } from 'rxjs';
 
 @Component({
 	selector: 'app-root',
@@ -17,7 +18,13 @@ export class AppComponent {
 	realizationByProd = [];
 	data = [];
 	displayTab = [ false, false, false ];
+	displayAchByProd = new ReplaySubject<any>(1);
 	avgSKU = [];
+	displayOptions = [
+		{ id: 0, name: 'Achievement by Category' },
+		{ id: 1, name: 'Achievement by Product' },
+		{ id: 2, name: 'Avg SKU' }
+	];
 
 	constructor(
 		private snackBar: MatSnackBar,
@@ -26,12 +33,16 @@ export class AppComponent {
 
 	ngOnInit() {
 		const conf = JSON.parse(localStorage.getItem('sapaConfig'));
+		const objectives = JSON.parse(localStorage.getItem('objectives'));
+		console.log('objectives', objectives);
 		console.log('conf', conf);
 		const g = _.groupBy(conf, 'Category');
 		const category = [];
 		Object.keys(g).map(m => {
 			category.push({name: m, products: g[m].map(n => n['ID']) });
 		});
+		category.push({ name: 'nan3+guig3+Junior', products: [ '12397003', '12305319', '12282718', '12381799'] });
+
 		this.category = category;
 		if (conf) { this.config = _.keyBy(conf, 'ID'); }
 	}
@@ -51,6 +62,7 @@ export class AppComponent {
 			Object.keys(g).map(m => {
 				category.push({ name: m, products: g[m].map(n => n['ID']) });
 			});
+			category.push({ name: 'nan3+guig3+Junior', products: [ '12397003', '12305319', '12282718', '12381799'] });
 			this.category = category;
 
 			this.snackBar.open('Configuration saved', 'Ok', { duration : 7000 });
@@ -68,20 +80,24 @@ export class AppComponent {
 				const worksheet = this.excelService.readFile(fileReader);
 				const arr = XLSX.utils.sheet_to_json(worksheet, {raw: true });
 				const data = [];
-				// console.log('eee', _.drop(arr, 12));
 				_.drop(arr, 12).forEach(sale => {
 					if (sale[''] !== '') {
+						const q = this.getQuantity(sale['_6'], sale['__EMPTY_9'], sale['__EMPTY_10']);
 						data.push({
 							id: sale['_6'],
 							name: sale['_7'],
-							quantity: this.getQuantity(sale['_6'], sale['__EMPTY_9'], sale['__EMPTY_10'] ),
+							quantityEA: q,
+							quantityCS: this.getQuantityCS(sale['_6'], q),
 							vendor: sale['_9'],
 							salesmanType: sale['_12'],
 							transaction: sale['_4'],
-							transactionType: sale['_3']
+							transactionType: sale['_3'],
+							TTC: this.getTTCPrice(sale['_6'], q),
+							HT: this.getHTPrice(sale['_6'], q)
 						});
 					}
 				});
+				console.log('data', data);
 				this.data = data;
 			};
 			fileReader.readAsArrayBuffer(this.file);
@@ -89,47 +105,34 @@ export class AppComponent {
 	}
 
 	displayAchievementByProd() {
-		this.displayTab = [false, true, false];
+		const data = JSON.parse(JSON.stringify(this.data));
+		this.displayAchByProd.next(data);
+		this.displayTab = [true, false, false];
 	}
 
 	displayAchievementByCat() {
-		const data =	JSON.parse(JSON.stringify(this.data));
-		const listingByProduct = [];
+		this.displayAchByProd.next(JSON.parse(JSON.stringify(this.data)));
+		this.displayTab = [false, true, false];
+	}
+
+	getProduct(data) {
+		const products = [];
 
 		Object.keys(_.groupBy(data, 'id')).map(m => {
 
 			const aon = _.groupBy(data, 'id')[m].map(q => q['quantity']);
 			const sum = _.reduce(aon, function(a, b) { return a + b; }, 0);
 
-			listingByProduct.push({
+			products.push({
 				id: _.groupBy(data, 'id')[m][0]['id'],
 				name: _.groupBy(data, 'id')[m][0]['name'],
-				quantity: sum,
-				ttc: this.getTTCPrice(_.groupBy(data, 'id')[m][0]['id'], sum),
-				ht: this.getHTPrice(_.groupBy(data, 'id')[m][0]['id'], sum)
+				quantityCS: sum,
+				quantityEA: sum,
+				TTC: this.getTTCPrice(_.groupBy(data, 'id')[m][0]['id'], sum),
+				HT: this.getHTPrice(_.groupBy(data, 'id')[m][0]['id'], sum)
 			});
 		});
-
-		this.realizationByProd = listingByProduct;
-		console.log('real prod', this.realizationByProd);
-
-		const realization = [];
-		this.category.push({ name: 'nan3+guig3+Junior', products: [ '12397003', '12305319', '12282718', '12381799'] });
-		this.category.forEach(cat => {
-			const r = { name: cat['name'], products: [], totalHT: 0, totalTTC: 0 };
-			cat['products'].forEach(pr => {
-				const found = listingByProduct.filter(f => f['id'] === pr);
-				if (found && found.length) { r['products'].push(found[0]);	}
-			});
-			r['totalTTC'] = _.reduce(r['products'].map(m => m['ttc']), function(a, b) { return a + b; }, 0);
-			r['totalHT'] = _.reduce(r['products'].map(m => m['ht']), function(a, b) { return a + b; }, 0);
-			realization.push(r);
-		});
-		this.realizationByCat = realization;
-		console.log('real', this.realizationByCat);
-
-		this.displayTab = [true, false, false];
-
+		return products;
 	}
 
 	getAVGSKU() {
@@ -160,6 +163,10 @@ export class AppComponent {
 		}
 	}
 
+	getQuantityCS(id, quantity) {
+		return quantity / this.config[id].Colisage;
+	}
+
 	getTTCPrice(id, sum) {
 		const retail = this.config[id]['prix_vente_HT'] * ((this.config[id]['tva'] / 100) + 1) ;
 		return ((retail + (retail * 1 / 100)) / this.config[id]['Colisage']) * sum;
@@ -167,5 +174,22 @@ export class AppComponent {
 
 	getHTPrice(id, sum) {
 		return (this.config[id]['prix_vente_HT'] / this.config[id]['Colisage']) * sum;
+	}
+
+	display(event) {
+		switch (event.value) {
+			case 0:
+				this.displayAchievementByCat();
+				break;
+			case 1:
+				this.displayAchievementByProd();
+				break;
+			case 2:
+				this.getAVGSKU();
+				break;
+
+			default:
+				break;
+		}
 	}
 }

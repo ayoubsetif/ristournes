@@ -1,0 +1,55 @@
+
+<input hidden type='file' #obtn accept=".xlsx" (change)="uploadObjectiveFile($event)">
+<button
+	mat-raised-button
+	color="primary"
+	(click)="obtn.click()"
+>Import Objectives File</button>
+
+<mat-form-field>
+	<mat-select [disabled]="!warehouseList.length" (selectionChange)="selectWarehouse($event)"  placeholder="Choose Warehouse/s">
+		<mat-option *ngFor="let warehouse of warehouseList" [value]="warehouse">
+			{{warehouse}}
+		</mat-option>
+	</mat-select>
+</mat-form-field>
+
+<button
+	mat-raised-button
+	color="primary"
+	(click)="showObjectives('product')"
+	[disabled]="!selectedWarehouse"
+>Show Objectives By Product</button>
+
+<button
+	mat-raised-button
+	color="primary"
+	(click)="showObjectives('category')"
+	[disabled]="!selectedWarehouse"
+>Show Objectives By Category</button>
+
+<button
+	mat-raised-button
+	color="primary"
+	(click)="showObjectives('rejected')"
+	[disabled]="!selectedWarehouse"
+>Show Rejected Products</button>
+
+<button
+	mat-raised-button
+	color="primary"
+	(click)="saveObjectives()"
+	[disabled]="!selectedWarehouse"
+>Save Objectives</button>
+
+<objectives-details
+	*ngIf="(objectivesSubj | async)?.products.length && tab[0]"
+	[products] = "objectivesSubj | async"
+></objectives-details>
+
+<display-products
+	*ngIf="(objectivesSubj | async)?.products.length && tab[1]"
+	[products] = "(objectivesSubj | async).products"
+	[category] = "category"
+	[type] = "'objective'"
+></display-products>
