@@ -62,7 +62,11 @@ THE SOFTWARE.
 
 @angular/material/button
 
+@angular/material/button-toggle
+
 @angular/material/core
+
+@angular/material/dialog
 
 @angular/material/form-field
 
@@ -70,7 +74,14 @@ THE SOFTWARE.
 
 @angular/material/snack-bar
 
+@angular/material/table
+
+@angular/material/tooltip
+
 @angular/platform-browser
+MIT
+
+@angular/router
 MIT
 
 lodash
