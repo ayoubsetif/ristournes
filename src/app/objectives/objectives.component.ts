@@ -90,7 +90,6 @@ export class ObjectivesComponent implements OnInit {
 			ob['quantityEA'] = this.getQuantityEA(ob['id'], ob['quantityCS']);
 			ob['TTC'] = this.getCATTC(ob['id'], ob['HT'] );
 		});
-		this.category.push({ name: 'nan3+guig3+Junior', products: [ '12397003', '12305319', '12282718', '12381799'] });
 	}
 
 	getProduct(value) {

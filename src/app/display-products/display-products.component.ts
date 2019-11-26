@@ -1,5 +1,7 @@
 import { Component, OnInit, Input } from '@angular/core';
 import { GetProductService } from '../app-services/get-product.service';
+import { CategoryProductsComponent } from '../category-products/category-products.component';
+import { MatDialog, MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 import * as _ from 'lodash';
 
 @Component({
@@ -19,8 +21,8 @@ export class DisplayProductsComponent implements OnInit {
 	];
 	tab = [];
 
-	displayedColumns: string[] = ['name', 'TTC', 'HT', 'quantityCS', 'quantityEA'];
-	constructor(private getProductService: GetProductService) { }
+	displayedColumns: string[] = ['name', 'TTC', 'HT', 'quantityCS', 'quantityEA', 'details'];
+	constructor(private getProductService: GetProductService, private dialog: MatDialog) { }
 
 	ngOnInit() { }
 
@@ -62,6 +64,13 @@ export class DisplayProductsComponent implements OnInit {
 			realization.push(r);
 		});
 		return realization;
+	}
+
+	openDialog(data): void {
+		const dialogRef = this.dialog.open(CategoryProductsComponent, {
+			width: '70%',
+			data: data
+		});
 	}
 
 }

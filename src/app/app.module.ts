@@ -10,7 +10,7 @@ import { MatTableModule } from '@angular/material/table';
 import { MatTooltipModule } from '@angular/material/tooltip';
 import { NgMathPipesModule } from 'ngx-pipes';
 import { MatButtonToggleModule } from '@angular/material/button-toggle';
-
+import { MatDialogModule } from '@angular/material/dialog';
 import { AppComponent } from './app.component';
 import { AppRoutingModule } from './app-routing.module';
 import { DisplayProductsComponent } from './display-products/display-products.component';
@@ -22,6 +22,7 @@ import { MonitoringByProductComponent } from './monitoring-by-product/monitoring
 import { MainComponent } from './main/main.component';
 import { AchivementComponent } from './achivement/achivement.component';
 import { MonitoringByCategoryComponent } from './monitoring-by-category/monitoring-by-category.component';
+import { CategoryProductsComponent } from './category-products/category-products.component';
 
 @NgModule({
 	declarations: [
@@ -34,7 +35,8 @@ import { MonitoringByCategoryComponent } from './monitoring-by-category/monitori
 		MonitoringByProductComponent,
 		MainComponent,
 		AchivementComponent,
-		MonitoringByCategoryComponent
+		MonitoringByCategoryComponent,
+		CategoryProductsComponent
 	],
 	imports: [
 		BrowserModule,
@@ -47,7 +49,11 @@ import { MonitoringByCategoryComponent } from './monitoring-by-category/monitori
 		NgMathPipesModule,
 		MatTooltipModule,
 		MatButtonToggleModule,
-		AppRoutingModule
+		AppRoutingModule,
+		MatDialogModule
+	],
+	entryComponents: [
+		CategoryProductsComponent
 	],
 	providers: [],
 	bootstrap: [AppComponent]

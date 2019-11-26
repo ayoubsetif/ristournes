@@ -1,22 +1,14 @@
-
-<h3 *ngIf="type === 'objective'">Objectives par Categorie</h3>
-<h3 *ngIf="type !== 'objective'">Réalisation par Categorie</h3>
-
-<mat-form-field>
-	<mat-select (selectionChange)="selectCanal($event)"  placeholder="Choisir un canal">
-		<mat-option *ngFor="let canal of canalType" [value]="canal.id">
-			{{canal.name}}
-		</mat-option>
-	</mat-select>
-</mat-form-field>
-
-<table mat-table [dataSource]="tab" class="mat-elevation-z8">
+<table mat-table [dataSource]="data" class="mat-elevation-z8">
+	<ng-container matColumnDef="id">
+		<th mat-header-cell *matHeaderCellDef> ID  </th>
+		<td mat-cell *matCellDef="let element"> {{element.id}} </td>
+	</ng-container>
 
 	<ng-container matColumnDef="name">
 		<th mat-header-cell *matHeaderCellDef> Name  </th>
 		<td mat-cell *matCellDef="let element"> {{element.name}} </td>
 	</ng-container>
-
+	
 	<ng-container matColumnDef="TTC">
 		<th mat-header-cell *matHeaderCellDef> TTC </th>
 		<td [matTooltip]="element.TTC" mat-cell  *matCellDef="let element"> {{element.TTC | floor: 3 }}</td>
@@ -28,22 +20,15 @@
 	</ng-container>
 
 	<ng-container matColumnDef="quantityCS">
-		<th mat-header-cell *matHeaderCellDef> Quantity (CS) </th>
-		<td [matTooltip]="element.quantityCS" mat-cell *matCellDef="let element"> {{element.quantityCS | floor: 3}} </td>
+		<th mat-header-cell *matHeaderCellDef> Quantity(CS) </th>
+		<td [matTooltip]="element.quantityCS" mat-cell *matCellDef="let element"> {{element.quantityCS | floor: 3 }} </td>
 	</ng-container>
 
 	<ng-container matColumnDef="quantityEA">
-		<th mat-header-cell *matHeaderCellDef> Quantity (EA) </th>
+		<th mat-header-cell *matHeaderCellDef> Quantity(EA) </th>
 		<td [matTooltip]="element.quantityEA" mat-cell *matCellDef="let element"> {{element.quantityEA | floor: 3}} </td>
-	</ng-container>
-
-	<ng-container matColumnDef="details">
-		<th mat-header-cell *matHeaderCellDef> Details </th>
-		<td mat-cell *matCellDef="let element"><button mat-raised-button (click)="openDialog(element.products)" color="primary">products</button></td>
 	</ng-container>
 	
 	<tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
 	<tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
 </table>
-
-
