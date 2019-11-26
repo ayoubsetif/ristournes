@@ -1,9 +1,9 @@
 
-<h3 *ngIf="type === 'objective'">Objectives by Category</h3>
-<h3 *ngIf="type !== 'objective'">Achievement by Category</h3>
+<h3 *ngIf="type === 'objective'">Objectives par Categorie</h3>
+<h3 *ngIf="type !== 'objective'">Réalisation par Categorie</h3>
 
 <mat-form-field>
-	<mat-select (selectionChange)="selectCanal($event)"  placeholder="Choose A canal">
+	<mat-select (selectionChange)="selectCanal($event)"  placeholder="Choisir un canal">
 		<mat-option *ngFor="let canal of canalType" [value]="canal.id">
 			{{canal.name}}
 		</mat-option>
@@ -12,13 +12,11 @@
 
 <table mat-table [dataSource]="tab" class="mat-elevation-z8">
 
-	<!-- totalDocumentSummary Column -->
 	<ng-container matColumnDef="name">
 		<th mat-header-cell *matHeaderCellDef> Name  </th>
 		<td mat-cell *matCellDef="let element"> {{element.name}} </td>
 	</ng-container>
-	
-	<!-- totalSales Column -->
+
 	<ng-container matColumnDef="TTC">
 		<th mat-header-cell *matHeaderCellDef> TTC </th>
 		<td [matTooltip]="element.TTC" mat-cell  *matCellDef="let element"> {{element.TTC | floor: 3 }}</td>

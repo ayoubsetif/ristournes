@@ -1,9 +1,9 @@
 
-<h3 *ngIf="products.type === 'rejected'">Rejected Products</h3>
-<h3 *ngIf="products.type !== 'rejected'">Objectives by Product</h3>
+<h3 *ngIf="products.type === 'rejected'">Produits rejetés</h3>
+<h3 *ngIf="products.type !== 'rejected'">Objectives par produit</h3>
 
 <mat-form-field *ngIf="products.type !== 'rejected'"	>
-	<mat-select (selectionChange)="selectCanal($event)"  placeholder="Choose A canal">
+	<mat-select (selectionChange)="selectCanal($event)"  placeholder="Choisir un canal">
 		<mat-option *ngFor="let canal of canalType" [value]="canal.id">
 			{{canal.name}}
 		</mat-option>

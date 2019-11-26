@@ -1,46 +1,38 @@
 
-<input hidden type='file' #obtn accept=".xlsx" (change)="uploadObjectiveFile($event)">
-<button
-	mat-raised-button
-	color="primary"
-	(click)="obtn.click()"
->Import Objectives File</button>
+<h4 class="vs-title">Objectives</h4>
 
-<mat-form-field>
-	<mat-select [disabled]="!warehouseList.length" (selectionChange)="selectWarehouse($event)"  placeholder="Choose Warehouse/s">
-		<mat-option *ngFor="let warehouse of warehouseList" [value]="warehouse">
-			{{warehouse}}
-		</mat-option>
-	</mat-select>
-</mat-form-field>
-
-<button
-	mat-raised-button
-	color="primary"
-	(click)="showObjectives('product')"
-	[disabled]="!selectedWarehouse"
->Show Objectives By Product</button>
-
-<button
-	mat-raised-button
-	color="primary"
-	(click)="showObjectives('category')"
-	[disabled]="!selectedWarehouse"
->Show Objectives By Category</button>
-
-<button
-	mat-raised-button
-	color="primary"
-	(click)="showObjectives('rejected')"
-	[disabled]="!selectedWarehouse"
->Show Rejected Products</button>
-
-<button
-	mat-raised-button
-	color="primary"
-	(click)="saveObjectives()"
-	[disabled]="!selectedWarehouse"
->Save Objectives</button>
+<div class="vi-btns">
+	<input hidden type='file' #obtn accept=".xlsx" (change)="uploadObjectiveFile($event)">
+	<button
+		mat-raised-button
+		color="primary"
+		(click)="obtn.click()"
+	>Importer les objectives</button>
+	
+	<mat-form-field>
+		<mat-select [disabled]="!warehouseList.length" (selectionChange)="selectWarehouse($event)"  placeholder="dépot">
+			<mat-option *ngFor="let warehouse of warehouseList" [value]="warehouse">
+				{{warehouse}}
+			</mat-option>
+		</mat-select>
+	</mat-form-field>
+	
+	<mat-form-field>
+		<mat-select [disabled]="!selectedWarehouse" (selectionChange)="showObjectives($event)"  placeholder="Choisir option">
+			<mat-option *ngFor="let op of displayOptions" [value]="op.id">
+				{{op.name}}
+			</mat-option>
+		</mat-select>
+	</mat-form-field>
+	
+	<button
+		mat-raised-button
+		class="import-config"
+		color="primary"
+		(click)="saveObjectives()"
+		[disabled]="!selectedWarehouse"
+	>Sauvegarder</button>
+</div>
 
 <objectives-details
 	*ngIf="(objectivesSubj | async)?.products.length && tab[0]"

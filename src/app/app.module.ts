@@ -21,6 +21,7 @@ import { ObjectivesDetailsComponent } from './objectives-details/objectives-deta
 import { MonitoringByProductComponent } from './monitoring-by-product/monitoring-by-product.component';
 import { MainComponent } from './main/main.component';
 import { AchivementComponent } from './achivement/achivement.component';
+import { MonitoringByCategoryComponent } from './monitoring-by-category/monitoring-by-category.component';
 
 @NgModule({
 	declarations: [
@@ -32,7 +33,8 @@ import { AchivementComponent } from './achivement/achivement.component';
 		ObjectivesDetailsComponent,
 		MonitoringByProductComponent,
 		MainComponent,
-		AchivementComponent
+		AchivementComponent,
+		MonitoringByCategoryComponent
 	],
 	imports: [
 		BrowserModule,

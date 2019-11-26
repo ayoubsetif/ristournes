@@ -17,7 +17,7 @@ export class AchivementComponent implements OnInit {
 	realizationByCat = [];
 	realizationByProd = [];
 	data = [];
-	displayTab = [ false, false, false, false ];
+	displayTab = [ false, false, false, false, false ];
 	displayAchByProd = new ReplaySubject<any>(1);
 	monitorAchByProd = new ReplaySubject<any>(1);
 	avgSKU = [];
@@ -25,7 +25,8 @@ export class AchivementComponent implements OnInit {
 		{ id: 0, name: 'Réalisation par catégorie' },
 		{ id: 1, name: 'réalisation par porduit' },
 		{ id: 2, name: 'Suivi de realisation par porduit' },
-		{ id: 3, name: 'Avg SKU' }
+		{ id: 3, name: 'Suivi de realisation par categorie' },
+		{ id: 4, name: 'Avg SKU' }
 	];
 
 	constructor(
@@ -86,15 +87,17 @@ export class AchivementComponent implements OnInit {
 	displayAchievementByProd() {
 		const data = JSON.parse(JSON.stringify(this.data));
 		this.displayAchByProd.next(data);
-		this.displayTab = [true, false, false, false];
+		this.displayTab = [true, false, false, false, false];
 	}
 
 	displayAchievementByCat() {
 		this.displayAchByProd.next(JSON.parse(JSON.stringify(this.data)));
-		this.displayTab = [false, true, false, false];
+		this.displayTab = [false, true, false, false, false];
 	}
 
-	displaySuivi() {
+
+
+	concatArrays() {
 		const data = JSON.parse(JSON.stringify(this.data));
 		const objectives = JSON.parse(localStorage.getItem('objectives'));
 		const ach = data.map(m => {
@@ -127,9 +130,19 @@ export class AchivementComponent implements OnInit {
 				salesmanType: m['salesmanType']
 			};
 		});
+		return _.concat(ach, obj);
+	}
 
-		this.monitorAchByProd.next(_.concat(ach, obj));
-		this.displayTab = [false, false, true, false];
+	displaySuivi() {
+		const conc = this.concatArrays();
+		this.monitorAchByProd.next(conc);
+		this.displayTab = [false, false, true, false, false];
+	}
+
+	displaySuiviCategory() {
+		const conc = this.concatArrays();
+		this.monitorAchByProd.next(conc);
+		this.displayTab = [false, false, false, true, false];
 	}
 
 	getProduct(data) {
@@ -169,7 +182,7 @@ export class AchivementComponent implements OnInit {
 		console.log('avg', avgSku);
 		this.avgSKU = avgSku;
 
-		this.displayTab = [false, false, false, true];
+		this.displayTab = [false, false, false, false, true];
 	}
 
 	getQuantity(id, quantity, uom) {
@@ -204,7 +217,10 @@ export class AchivementComponent implements OnInit {
 			case 2:
 				this.displaySuivi();
 				break;
-			case 3:
+				case 3:
+				this.displaySuiviCategory();
+				break;
+			case 4:
 				this.getAVGSKU();
 				break;
 

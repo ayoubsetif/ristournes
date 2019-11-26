@@ -22,6 +22,12 @@ export class ObjectivesComponent implements OnInit {
 	category = [];
 	tab = [ false, false ];
 
+	displayOptions = [
+		{id: 0, name: 'Objectives par produits' },
+		{id: 1, name: 'Objectives par catgorie'},
+		{id: 2, name: 'produits rejetés '}
+	];
+
 	constructor(private snackBar: MatSnackBar) { }
 
 	ngOnInit() {
@@ -112,9 +118,9 @@ export class ObjectivesComponent implements OnInit {
 		return (retail + (retail * 1 / 100));
 	}
 
-	showObjectives(value) {
-		switch (value) {
-			case 'product':
+	showObjectives(event) {
+		switch (event.value) {
+			case 0:
 				this.objectivesSubj.next({
 					type: 'accepted',
 					products: this.objectives
@@ -122,7 +128,7 @@ export class ObjectivesComponent implements OnInit {
 				this.tab = [true, false];
 
 				break;
-			case 'rejected':
+			case 2:
 				this.objectivesSubj.next({
 					type: 'rejected',
 					products: this.rejectedProducts
@@ -130,8 +136,7 @@ export class ObjectivesComponent implements OnInit {
 				this.tab = [true, false];
 
 				break;
-
-			case 'category':
+			case 1:
 				this.objectivesSubj.next({
 					type: 'category',
 					products: this.objectives

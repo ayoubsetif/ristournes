@@ -1,13 +1,17 @@
-<input hidden  type='file' #dmsbtn accept=".xlsx" (change)="uploadFile($event)">
-<button mat-raised-button color="primary" (click)="dmsbtn.click()">Import Document Listing</button>
+<h4 class="vs-title">Réalisation</h4>
 
-<mat-form-field>
-	<mat-select [disabled]="!data.length" (selectionChange)="display($event)"  placeholder="Choose ...">
-		<mat-option *ngFor="let op of displayOptions" [value]="op.id">
-			{{op.name}}
-		</mat-option>
-	</mat-select>
-</mat-form-field>
+<div class="vi-btns">
+	<input hidden  type='file' #dmsbtn accept=".xlsx" (change)="uploadFile($event)">
+	<button mat-raised-button color="primary" (click)="dmsbtn.click()">Import Document Listing</button>
+	
+	<mat-form-field>
+		<mat-select [disabled]="!data.length" (selectionChange)="display($event)"  placeholder="Choisir ...">
+			<mat-option *ngFor="let op of displayOptions" [value]="op.id">
+				{{op.name}}
+			</mat-option>
+		</mat-select>
+	</mat-form-field>
+</div>
 
 <realisation-prod
 	*ngIf="(displayAchByProd | async)?.length && displayTab[0]"
@@ -26,7 +30,14 @@
 	[products]="monitorAchByProd | async"
 ></monitoring-by-product>
 
+<monitoring-by-category
+	*ngIf="(monitorAchByProd | async)?.length && displayTab[3]"
+	[products]="monitorAchByProd | async"
+	[category] = "category"
+>
+</monitoring-by-category>
+
 <avg-sku
-	*ngIf="avgSKU.length && displayTab[3]"
+	*ngIf="avgSKU.length && displayTab[4]"
 	[avgSKU]="avgSKU"
 ></avg-sku>

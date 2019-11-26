@@ -2,3 +2,31 @@
 monitoring-by-product {
 	display: block
 }
+
+.vs-title {
+	text-align: center;
+	color: #2f52b7;
+	font-size: 70px;
+	margin-top: 50px;
+	text-transform: uppercase;
+	font-weight: bold;
+}
+
+.vi-btns {
+	button {
+		margin-right: 20px;
+		width: 200px;
+	}
+	.mat-form-field {
+		margin-right: 20px
+	}
+}
+.import-config {
+	position: absolute !important;
+	right: 10px;
+}
+.re-btns {
+	mat-form-field {
+		margin-left: 10px;
+	}
+}
