@@ -95,8 +95,6 @@ export class AchivementComponent implements OnInit {
 		this.displayTab = [false, true, false, false, false];
 	}
 
-
-
 	concatArrays() {
 		const data = JSON.parse(JSON.stringify(this.data));
 		const objectives = JSON.parse(localStorage.getItem('objectives'));
@@ -186,6 +184,9 @@ export class AchivementComponent implements OnInit {
 	}
 
 	getQuantity(id, quantity, uom) {
+		if (!this.config[id]) {
+			this.snackBar.open(`probleme avec le produit qui a ID :: ${id}`, 'Ok', { duration : 7000 });
+		}
 		if (uom === 'EA' || uom === 'DS') {
 			return Number(quantity);
 		} else {
