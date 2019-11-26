@@ -1,0 +1,93 @@
+<mat-button-toggle-group (change)="chooseBy($event)" name="fontStyle" aria-label="Font Style">
+	<mat-button-toggle value="CS">Suivi par caisse</mat-button-toggle>
+	<mat-button-toggle value="NPS">Suivi par NPS</mat-button-toggle>
+</mat-button-toggle-group>
+
+<mat-form-field>
+	<mat-select (selectionChange)="selectCanal($event)"  placeholder="Choose A canal">
+		<mat-option *ngFor="let canal of canalType" [value]="canal.id">
+			{{canal.name}}
+		</mat-option>
+	</mat-select>
+</mat-form-field>
+
+<table *ngIf="displayed[0]" mat-table [dataSource]="tab" class="mat-elevation-z8">
+	<ng-container matColumnDef="id">
+		<th mat-header-cell *matHeaderCellDef> ID  </th>
+		<td mat-cell *matCellDef="let element"> {{element.id}} </td>
+	</ng-container>
+
+	<ng-container matColumnDef="name">
+		<th mat-header-cell *matHeaderCellDef> Name  </th>
+		<td mat-cell *matCellDef="let element"> {{element.name}} </td>
+	</ng-container>
+
+	<ng-container matColumnDef="objectiveQuantityCS">
+		<th mat-header-cell *matHeaderCellDef> Objectif (CS) </th>
+		<td [matTooltip]="element.objectiveCS" mat-cell *matCellDef="let element"> {{element.objectiveCS | floor: 3}} </td>
+	</ng-container>
+
+	<ng-container matColumnDef="achievedQuantityCS">
+		<th mat-header-cell *matHeaderCellDef> Réalisation (CS) </th>
+		<td [matTooltip]="element.achievedCS" mat-cell  *matCellDef="let element"> {{element.achievedCS | floor: 3 }}</td>
+	</ng-container>
+
+	<ng-container matColumnDef="Progression">
+		<th mat-header-cell *matHeaderCellDef> Progression </th>
+		<td mat-cell  *matCellDef="let element"> {{element.progressionCS }} %</td>
+	</ng-container>
+
+	<ng-container matColumnDef="GAP">
+		<th mat-header-cell *matHeaderCellDef> GAP </th>
+		<td mat-cell  *matCellDef="let element"> {{element.gapCS | floor: 3 }}</td>
+	</ng-container>
+	
+	<tr mat-header-row *matHeaderRowDef="displayedByQuantity"></tr>
+	<tr mat-row *matRowDef="let row; columns: displayedByQuantity;" [ngClass]="{'red-back ': row.progressionCS < 100, 'green-back': row.progressionCS > 100, 'yellow-back': row.objectiveCS === 0 }"></tr>
+</table>
+
+
+<table *ngIf="displayed[1]" mat-table [dataSource]="tab" class="mat-elevation-z8">
+	<ng-container matColumnDef="id">
+		<th mat-header-cell *matHeaderCellDef> ID  </th>
+		<td mat-cell *matCellDef="let element"> {{element.id}} </td>
+	</ng-container>
+
+	<ng-container matColumnDef="name">
+		<th mat-header-cell *matHeaderCellDef> Name  </th>
+		<td mat-cell *matCellDef="let element"> {{element.name}} </td>
+	</ng-container>
+
+	<ng-container matColumnDef="objectivesHT">
+		<th mat-header-cell *matHeaderCellDef> Objectif (HT) </th>
+		<td [matTooltip]="element.objectiveHT" mat-cell *matCellDef="let element"> {{element.objectiveHT | floor: 3}} </td>
+	</ng-container>
+
+	<ng-container matColumnDef="objectivesTTC">
+		<th mat-header-cell *matHeaderCellDef> Objectif (TTC) </th>
+		<td [matTooltip]="element.objectiveTTC" mat-cell *matCellDef="let element"> {{element.objectiveTTC | floor: 3}} </td>
+	</ng-container>
+
+	<ng-container matColumnDef="achievedHT">
+		<th mat-header-cell *matHeaderCellDef> Réalisation (HT) </th>
+		<td [matTooltip]="element.achievedHT" mat-cell  *matCellDef="let element"> {{element.achievedHT | floor: 3 }}</td>
+	</ng-container>
+
+	<ng-container matColumnDef="achievedTTC">
+		<th mat-header-cell *matHeaderCellDef> Réalisation (TTC) </th>
+		<td [matTooltip]="element.achievedTTC" mat-cell  *matCellDef="let element"> {{element.achievedTTC | floor: 3 }}</td>
+	</ng-container>
+
+	<ng-container matColumnDef="Progression">
+		<th mat-header-cell *matHeaderCellDef> Progression </th>
+		<td mat-cell *matCellDef="let element"> {{element.progressionNPS }} %</td>
+	</ng-container>
+
+	<ng-container matColumnDef="GAP">
+		<th mat-header-cell *matHeaderCellDef> GAP (HT) </th>
+		<td mat-cell  *matCellDef="let element"> {{element.gapNPS | floor: 3 }}</td>
+	</ng-container>
+	
+	<tr mat-header-row *matHeaderRowDef="displayedByNPS"></tr>
+	<tr  mat-row *matRowDef="let row; columns: displayedByNPS;" [ngClass]="{'red-back ': row.progressionNPS < 100, 'green-back': row.progressionNPS > 100, 'yellow-back': row.objectiveHT === 0 }"></tr>
+</table>

@@ -1,0 +1,32 @@
+<input hidden  type='file' #dmsbtn accept=".xlsx" (change)="uploadFile($event)">
+<button mat-raised-button color="primary" (click)="dmsbtn.click()">Import Document Listing</button>
+
+<mat-form-field>
+	<mat-select [disabled]="!data.length" (selectionChange)="display($event)"  placeholder="Choose ...">
+		<mat-option *ngFor="let op of displayOptions" [value]="op.id">
+			{{op.name}}
+		</mat-option>
+	</mat-select>
+</mat-form-field>
+
+<realisation-prod
+	*ngIf="(displayAchByProd | async)?.length && displayTab[0]"
+	[products]="displayAchByProd | async"
+></realisation-prod>
+
+<display-products
+	*ngIf="(displayAchByProd | async)?.length && displayTab[1]"
+	[products]="displayAchByProd | async"
+	[type]="'Achivement'"
+	[category] = "category"
+></display-products>
+
+<monitoring-by-product
+	*ngIf="(monitorAchByProd | async)?.length && displayTab[2]"
+	[products]="monitorAchByProd | async"
+></monitoring-by-product>
+
+<avg-sku
+	*ngIf="avgSKU.length && displayTab[3]"
+	[avgSKU]="avgSKU"
+></avg-sku>

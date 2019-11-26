@@ -9,13 +9,18 @@ import { MatSelectModule } from '@angular/material/select';
 import { MatTableModule } from '@angular/material/table';
 import { MatTooltipModule } from '@angular/material/tooltip';
 import { NgMathPipesModule } from 'ngx-pipes';
+import { MatButtonToggleModule } from '@angular/material/button-toggle';
 
 import { AppComponent } from './app.component';
+import { AppRoutingModule } from './app-routing.module';
 import { DisplayProductsComponent } from './display-products/display-products.component';
 import { RealisationProdComponent } from './realisation-prod/realisation-prod.component';
 import { AvgSkuComponent } from './avg-sku/avg-sku.component';
 import { ObjectivesComponent } from './objectives/objectives.component';
 import { ObjectivesDetailsComponent } from './objectives-details/objectives-details.component';
+import { MonitoringByProductComponent } from './monitoring-by-product/monitoring-by-product.component';
+import { MainComponent } from './main/main.component';
+import { AchivementComponent } from './achivement/achivement.component';
 
 @NgModule({
 	declarations: [
@@ -24,7 +29,10 @@ import { ObjectivesDetailsComponent } from './objectives-details/objectives-deta
 		RealisationProdComponent,
 		AvgSkuComponent,
 		ObjectivesComponent,
-		ObjectivesDetailsComponent
+		ObjectivesDetailsComponent,
+		MonitoringByProductComponent,
+		MainComponent,
+		AchivementComponent
 	],
 	imports: [
 		BrowserModule,
@@ -35,7 +43,9 @@ import { ObjectivesDetailsComponent } from './objectives-details/objectives-deta
 		MatSelectModule,
 		MatTableModule,
 		NgMathPipesModule,
-		MatTooltipModule
+		MatTooltipModule,
+		MatButtonToggleModule,
+		AppRoutingModule
 	],
 	providers: [],
 	bootstrap: [AppComponent]
