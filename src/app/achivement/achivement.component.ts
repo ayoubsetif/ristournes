@@ -1,9 +1,11 @@
 import { Component, OnInit } from '@angular/core';
 import { MatSnackBar } from '@angular/material';
 import { ExcelManipulationService } from '../app-services/excel-manipulation.service';
+import { GetProductService } from '../app-services/get-product.service';
 import * as XLSX from 'xlsx';
 import * as _ from 'lodash';
 import { ReplaySubject } from 'rxjs';
+import { ActivatedRoute } from '@angular/router';
 
 @Component({
 	selector: 'app-achivement',
@@ -21,6 +23,8 @@ export class AchivementComponent implements OnInit {
 	displayAchByProd = new ReplaySubject<any>(1);
 	monitorAchByProd = new ReplaySubject<any>(1);
 	avgSKU = [];
+	isAdmin = false;
+
 	displayOptions = [
 		{ id: 0, name: 'Réalisation par catégorie' },
 		{ id: 1, name: 'réalisation par porduit' },
@@ -31,14 +35,14 @@ export class AchivementComponent implements OnInit {
 
 	constructor(
 		private snackBar: MatSnackBar,
-		private excelService: ExcelManipulationService
+		private excelService: ExcelManipulationService,
+		private prodService: GetProductService,
+		private route: ActivatedRoute
 	) { }
 
 	ngOnInit() {
 		const conf = JSON.parse(localStorage.getItem('sapaConfig'));
-		// const objectives = JSON.parse(localStorage.getItem('objectives'));
-		// console.log('objectives', objectives);
-		console.log('conf', conf);
+
 		const g = _.groupBy(conf, 'Category');
 		const category = [];
 		Object.keys(g).map(m => {
@@ -48,6 +52,10 @@ export class AchivementComponent implements OnInit {
 
 		this.category = category;
 		if (conf) { this.config = _.keyBy(conf, 'ID'); }
+
+		if (this.route.snapshot.params.cred === 'admin') {
+			this.isAdmin = true;
+		}
 	}
 
 	uploadFile(event) {
@@ -228,5 +236,49 @@ export class AchivementComponent implements OnInit {
 			default:
 				break;
 		}
+	}
+
+	downloadRistourne() {
+		const result = [];
+		const conc = this.concatArrays();
+		const resultByCategory = this.prodService.getCategory(this.prodService.getProductsForSuivi(conc), this.category);
+
+		const totalTTC = _.reduce(resultByCategory.filter(f => f['name'] !== 'IF')
+			.map(m => m['achievedTTC']), function(a, b) { return a + b; }, 0);
+		const totalHT = _.reduce(resultByCategory.filter(f => f['name'] !== 'IF')
+			.map(m => m['achievedHT']), function(a, b) { return a + b; }, 0);
+		const totalObjHT = _.reduce(resultByCategory.filter(f => f['name'] !== 'IF')
+			.map(m => m['objectiveHT']), function(a, b) { return a + b; }, 0);
+
+		result.unshift(['CATEGOERIE', 'Objectives', 'Realisation HT', 'Realisation TTC',
+		'OUT', 'NB VISITE', 'COUVERTURE', 'TAUX DE SUCCES', 'FACTURE', 'TRADE TERMS', 'IN', 'TOTAL']);
+		resultByCategory.forEach(ca => {
+			if (ca['name'] !== 'IF') {
+				const obj = [ca['name'], ca['objectiveHT'], ca['achievedHT'], ca['achievedTTC'], '', '', '', '', '', '', '', ''];
+				if (ca['achievedHT'] >= ca['objectiveHT']) {
+					obj[4] = ca['achievedTTC'] * 0.005;
+				}
+				result.push(obj);
+			}
+		});
+
+		const totalOUT = _.reduce(_.compact(result.filter(f => !isNaN(f[4])).map(m => +m[4])), function(a, b) { return a + b; }, 0);
+
+		const succesRate = totalTTC * 0.0025;
+		const NbVisite = totalTTC * 0.0025;
+		const couvrage = totalTTC * 0.0025;
+		const invoice = 0;
+		const tradeTerms = 0;
+		const In = 0;
+
+		const total = totalOUT + NbVisite + couvrage + succesRate + invoice + tradeTerms + In;
+		result.push(['TOTAL', totalObjHT, totalHT, totalTTC, totalOUT, NbVisite,
+		couvrage, succesRate, invoice, tradeTerms , In, total ]);
+
+		const ws: XLSX.WorkSheet = XLSX.utils.aoa_to_sheet(result);
+		const wb: XLSX.WorkBook = XLSX.utils.book_new();
+		XLSX.utils.book_append_sheet(wb, ws, 'Sheet1');
+
+		XLSX.writeFile(wb, `Ristourne.xlsx`);
 	}
 }

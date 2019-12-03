@@ -11,6 +11,16 @@
 			</mat-option>
 		</mat-select>
 	</mat-form-field>
+
+	<button
+		class="import-config"
+		*ngIf="isAdmin"
+		[disabled]="!data.length"
+		mat-raised-button
+		color="primary"
+		(click)="downloadRistourne()"
+	>Imprimer les ristournes</button>
+
 </div>
 
 <realisation-prod
