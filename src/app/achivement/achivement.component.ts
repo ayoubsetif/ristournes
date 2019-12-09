@@ -67,10 +67,9 @@ export class AchivementComponent implements OnInit {
 			fileReader.onload = (e) => {
 				const worksheet = this.excelService.readFile(fileReader);
 			this.snackBar.open('Wrong File Type', 'Ok', { duration : 7000 });
-				// const arr = XLSX.utils.sheet_to_json(worksheet, {raw: true });
+				const arr = XLSX.utils.sheet_to_json(worksheet, {raw: true });
 				const data = [];
-				_.drop([], 12).forEach(sale => {
-				// 	_.drop(arr, 12).forEach(sale => {
+				_.drop(arr, 12).forEach(sale => {
 					if (sale[''] !== '') {
 						const q = this.getQuantity(sale['_6'], sale['__EMPTY_9'], sale['__EMPTY_10']);
 						data.push({
