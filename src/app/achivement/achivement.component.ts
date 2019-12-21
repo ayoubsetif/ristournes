@@ -66,7 +66,6 @@ export class AchivementComponent implements OnInit {
 			const fileReader = new FileReader();
 			fileReader.onload = (e) => {
 				const worksheet = this.excelService.readFile(fileReader);
-			this.snackBar.open('Wrong File Type', 'Ok', { duration : 7000 });
 				const arr = XLSX.utils.sheet_to_json(worksheet, {raw: true });
 				const data = [];
 				_.drop(arr, 12).forEach(sale => {
@@ -196,8 +195,32 @@ export class AchivementComponent implements OnInit {
 		if (!this.config[id]) {
 			this.snackBar.open(`probleme avec le produit qui a ID :: ${id}`, 'Ok', { duration : 7000 });
 		}
-		if (uom === 'EA' || uom === 'DS') {
+		// if (uom === 'EA' || uom === 'DS') {
+		// 	return Number(quantity);
+		// } else {
+			if (uom === 'EA') {
 			return Number(quantity);
+		} else if (uom === 'DS') {
+			switch (id) {
+				case '12272044':
+					return 12 * Number(quantity);
+				break;
+
+				case '12427772':
+					return 6 * Number(quantity);
+				break;
+
+				case '12427710':
+					return 18 * Number(quantity);
+				break;
+
+				case '12351335':
+					return 120 * Number(quantity);
+				break;
+				default:
+					return Number(quantity);
+				break;
+			}
 		} else {
 			return this.config[id].Colisage * quantity;
 		}
@@ -252,10 +275,10 @@ export class AchivementComponent implements OnInit {
 			.map(m => m['objectiveHT']), function(a, b) { return a + b; }, 0);
 
 		result.unshift(['CATEGOERIE', 'Objectives', 'Realisation HT', 'Realisation TTC',
-		'OUT', 'NB VISITE', 'COUVERTURE', 'TAUX DE SUCCES', 'FACTURE', 'TRADE TERMS', 'IN', 'TOTAL']);
+		'OUT', 'TAUX DE VISITE', 'COUVERTURE', 'TAUX DE SUCCES', 'FACTURE', 'PICTURE OF SUCCES', 'TAUX ACCEPTATION', 'TRADE TERMS', 'IN', 'TOTAL']);
 		resultByCategory.forEach(ca => {
 			if (ca['name'] !== 'IF') {
-				const obj = [ca['name'], ca['objectiveHT'], ca['achievedHT'], ca['achievedTTC'], '', '', '', '', '', '', '', ''];
+				const obj = [ca['name'], ca['objectiveHT'], ca['achievedHT'], ca['achievedTTC'], '', '', '', '', '', '', '', '', '', ''];
 				if (ca['achievedHT'] >= ca['objectiveHT']) {
 					obj[4] = ca['achievedTTC'] * 0.005;
 				}
@@ -268,13 +291,15 @@ export class AchivementComponent implements OnInit {
 		const succesRate = totalTTC * 0.0025;
 		const NbVisite = totalTTC * 0.0025;
 		const couvrage = totalTTC * 0.0025;
+		const picture = totalTTC * 0.0025;
 		const invoice = 0;
 		const tradeTerms = 0;
 		const In = 0;
+		const acceptation = 0;
 
-		const total = totalOUT + NbVisite + couvrage + succesRate + invoice + tradeTerms + In;
+		const total = totalOUT + NbVisite + couvrage + succesRate + invoice + tradeTerms + In + picture + acceptation;
 		result.push(['TOTAL', totalObjHT, totalHT, totalTTC, totalOUT, NbVisite,
-		couvrage, succesRate, invoice, tradeTerms , In, total ]);
+		couvrage, succesRate, invoice, picture, acceptation, tradeTerms , In, total ]);
 
 		const ws: XLSX.WorkSheet = XLSX.utils.aoa_to_sheet(result);
 		const wb: XLSX.WorkBook = XLSX.utils.book_new();
