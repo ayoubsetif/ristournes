@@ -10,6 +10,7 @@ export class GetProductService {
 		const products = [];
 
 		Object.keys(_.groupBy(data, 'id')).map(m => {
+			const dis = [];
 			const totalCS = _.groupBy(data, 'id')[m].map(q => q['quantityCS']);
 			const totalEA = _.groupBy(data, 'id')[m].map(q => q['quantityEA']);
 			const totalCAHT = _.groupBy(data, 'id')[m].map(q => q['HT']);
@@ -20,13 +21,21 @@ export class GetProductService {
 			const sumCAHT = _.reduce(totalCAHT, function(a, b) { return a + b; }, 0);
 			const sumCATTC = _.reduce(totalCATTC, function(a, b) { return a + b; }, 0);
 
+			const discount = _.groupBy(_.groupBy(data, 'id')[m], 'discount');
+			
+			Object.keys(discount).map(k => {
+				const totcs =  _.reduce(discount[k].map(r => r['quantityCS']), function(a, b) { return a + b; }, 0);
+				const totea =  _.reduce(discount[k].map(r => r['quantityEA']), function(a, b) { return a + b; }, 0);
+				dis.push({ discount: k, totalcs: totcs, totalea: totea })
+			})
 			products.push({
 				id: _.groupBy(data, 'id')[m][0]['id'],
 				name: _.groupBy(data, 'id')[m][0]['name'],
 				quantityCS: sumCS,
 				quantityEA: sumEA,
 				TTC: sumCATTC,
-				HT: sumCAHT
+				HT: sumCAHT,
+				discount: dis
 			});
 		});
 		return products;

@@ -80,6 +80,7 @@ export class AchivementComponent implements OnInit {
 							salesmanType: sale['_12'],
 							transaction: sale['_4'],
 							transactionType: sale['_3'],
+							discount: sale['__EMPTY_6'],
 							TTC: this.getTTCPrice(sale['_6'], q),
 							HT: this.getHTPrice(sale['_6'], q)
 						});
@@ -262,49 +263,4 @@ export class AchivementComponent implements OnInit {
 		}
 	}
 
-	downloadRistourne() {
-		const result = [];
-		const conc = this.concatArrays();
-		const resultByCategory = this.prodService.getCategory(this.prodService.getProductsForSuivi(conc), this.category);
-
-		const totalTTC = _.reduce(resultByCategory.filter(f => f['name'] !== 'IF')
-			.map(m => m['achievedTTC']), function(a, b) { return a + b; }, 0);
-		const totalHT = _.reduce(resultByCategory.filter(f => f['name'] !== 'IF')
-			.map(m => m['achievedHT']), function(a, b) { return a + b; }, 0);
-		const totalObjHT = _.reduce(resultByCategory.filter(f => f['name'] !== 'IF')
-			.map(m => m['objectiveHT']), function(a, b) { return a + b; }, 0);
-
-		result.unshift(['CATEGOERIE', 'Objectives', 'Realisation HT', 'Realisation TTC',
-		'OUT', 'TAUX DE VISITE', 'COUVERTURE', 'TAUX DE SUCCES', 'FACTURE', 'PICTURE OF SUCCES', 'TAUX ACCEPTATION', 'TRADE TERMS', 'IN', 'TOTAL']);
-		resultByCategory.forEach(ca => {
-			if (ca['name'] !== 'IF') {
-				const obj = [ca['name'], ca['objectiveHT'], ca['achievedHT'], ca['achievedTTC'], '', '', '', '', '', '', '', '', '', ''];
-				if (ca['achievedHT'] >= ca['objectiveHT']) {
-					obj[4] = ca['achievedTTC'] * 0.005;
-				}
-				result.push(obj);
-			}
-		});
-
-		const totalOUT = _.reduce(_.compact(result.filter(f => !isNaN(f[4])).map(m => +m[4])), function(a, b) { return a + b; }, 0);
-
-		const succesRate = totalTTC * 0.0025;
-		const NbVisite = totalTTC * 0.0025;
-		const couvrage = totalTTC * 0.0025;
-		const picture = totalTTC * 0.0025;
-		const invoice = 0;
-		const tradeTerms = 0;
-		const In = 0;
-		const acceptation = 0;
-
-		const total = totalOUT + NbVisite + couvrage + succesRate + invoice + tradeTerms + In + picture + acceptation;
-		result.push(['TOTAL', totalObjHT, totalHT, totalTTC, totalOUT, NbVisite,
-		couvrage, succesRate, invoice, picture, acceptation, tradeTerms , In, total ]);
-
-		const ws: XLSX.WorkSheet = XLSX.utils.aoa_to_sheet(result);
-		const wb: XLSX.WorkBook = XLSX.utils.book_new();
-		XLSX.utils.book_append_sheet(wb, ws, 'Sheet1');
-
-		XLSX.writeFile(wb, `Ristourne.xlsx`);
-	}
 }

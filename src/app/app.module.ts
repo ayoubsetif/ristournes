@@ -23,6 +23,8 @@ import { MainComponent } from './main/main.component';
 import { AchivementComponent } from './achivement/achivement.component';
 import { MonitoringByCategoryComponent } from './monitoring-by-category/monitoring-by-category.component';
 import { CategoryProductsComponent } from './category-products/category-products.component';
+import { AdminComponent } from './admin/admin.component';
+import { DiscountDetailsComponent } from './discount-details/discount-details.component';
 
 @NgModule({
 	declarations: [
@@ -36,7 +38,9 @@ import { CategoryProductsComponent } from './category-products/category-products
 		MainComponent,
 		AchivementComponent,
 		MonitoringByCategoryComponent,
-		CategoryProductsComponent
+		CategoryProductsComponent,
+		AdminComponent,
+		DiscountDetailsComponent
 	],
 	imports: [
 		BrowserModule,
@@ -53,7 +57,8 @@ import { CategoryProductsComponent } from './category-products/category-products
 		MatDialogModule
 	],
 	entryComponents: [
-		CategoryProductsComponent
+		CategoryProductsComponent,
+		DiscountDetailsComponent
 	],
 	providers: [],
 	bootstrap: [AppComponent]

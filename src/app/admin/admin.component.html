@@ -1,0 +1,51 @@
+<input hidden  type='file' #dmsbtn accept=".xlsx" (change)="uploadFile($event)">
+<button mat-raised-button color="primary" (click)="dmsbtn.click()">Import Document Listing</button>
+
+<input hidden type='file' #obtn accept=".xlsx" (change)="uploadSalesFile($event)">
+<button
+	mat-raised-button
+	color="primary"
+	(click)="obtn.click()"
+>Importer les achats</button>
+
+<button
+	class="import-config"
+	mat-raised-button
+	color="primary"
+	[disabled] = "!data.length"
+	(click)="downloadRistourne()"
+>Imprimer les ristournes</button>
+
+<div *ngIf="achat.length">
+	<table mat-table [dataSource]="achat" class="mat-elevation-z8">
+		<ng-container matColumnDef="id">
+			<th mat-header-cell *matHeaderCellDef> ID  </th>
+			<td mat-cell *matCellDef="let element"> {{element.id}} </td>
+		</ng-container>
+	
+		<ng-container matColumnDef="name">
+			<th mat-header-cell *matHeaderCellDef> Name  </th>
+			<td mat-cell *matCellDef="let element"> {{element.name}} </td>
+		</ng-container>
+
+		<ng-container matColumnDef="quantity">
+			<th mat-header-cell *matHeaderCellDef> Quantity(EA) </th>
+			<td [matTooltip]="element.quantity" mat-cell *matCellDef="let element"> {{element.quantity }} </td>
+		</ng-container>
+		
+		<ng-container matColumnDef="TTC">
+			<th mat-header-cell *matHeaderCellDef> TTC </th>
+			<td [matTooltip]="element.priceTTC" mat-cell  *matCellDef="let element"> {{element.priceTTC | floor: 3 }}</td>
+		</ng-container>
+		
+		<ng-container matColumnDef="HT">
+			<th mat-header-cell *matHeaderCellDef> HT </th>
+			<td [matTooltip]="element.priceHT" mat-cell *matCellDef="let element"> {{element.priceHT | floor: 3}} </td>
+		</ng-container>
+	
+		
+			
+		<tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+		<tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
+	</table>
+</div>

@@ -1,6 +1,8 @@
 import { Component, OnInit, Input } from '@angular/core';
 import * as _ from 'lodash';
 import { GetProductService } from '../app-services/get-product.service';
+import { MatDialog } from '@angular/material/dialog';
+import { DiscountDetailsComponent } from '../discount-details/discount-details.component';
 
 @Component({
 	selector: 'realisation-prod',
@@ -9,14 +11,14 @@ import { GetProductService } from '../app-services/get-product.service';
 })
 export class RealisationProdComponent implements OnInit {
 	@Input() products: any[];
-	displayedColumns: string[] = ['id', 'name', 'TTC', 'HT', 'quantityCS', 'quantityEA'];
+	displayedColumns: string[] = ['id', 'name', 'TTC', 'HT', 'quantityCS', 'quantityEA', 'details'];
 	canalType = [
 		{ id: 0, name: 'ALL'},
 		{ id: 1, name: 'Gros'},
 		{ id: 2, name: 'Detail'},
 	];
 	tab = [];
-	constructor(private getProductService: GetProductService) { }
+	constructor(private getProductService: GetProductService, private dialog: MatDialog) { }
 
 	ngOnInit() { }
 
@@ -40,5 +42,12 @@ export class RealisationProdComponent implements OnInit {
 			default:
 				break;
 		}
+	}
+
+	openDialog(data): void {
+		const dialogRef = this.dialog.open(DiscountDetailsComponent, {
+			width: '70%',
+			data: data
+		});
 	}
 }
