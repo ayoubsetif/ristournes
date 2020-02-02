@@ -20,6 +20,7 @@ export class AdminComponent implements OnInit {
   displayedColumns: string[] = ['id', 'name', 'quantity', 'TTC', 'HT'];
   totalSalesHT = 0;
   totalSalesTTC = 0;
+  erpDjamel = [];
 
 
   constructor(
@@ -105,6 +106,36 @@ export class AdminComponent implements OnInit {
       this.achat = indexes;
 		};
 		fileReader.readAsArrayBuffer(this.file);
+  }
+
+  uploadERPFile(event) {
+	this.file = event.target.files[0];
+	const fileReader = new FileReader();
+	fileReader.onload = (e) => {
+		const worksheet = this.excelService.readFile(fileReader);
+		const arr = XLSX.utils.sheet_to_json(worksheet, {raw: true });
+ 	const indexes = [];
+	arr.forEach(e => {
+		this.rconfig.forEach(prod => {
+			if (e['__EMPTY'] && e['__EMPTY'].includes(prod['ID'])) {
+				//indexes.push({ id: prod['ID'], name: prod['Discription'], quantity: e['Total'] , sum: prod['diff_prix_sapa'] * e['Total']  });
+				indexes.push([ prod['ID'], prod['Discription'], e['Total'] , prod['diff_prix_sapa'] * e['Total']  ]);
+			}
+		});
+	});
+		const sum = _.reduce(indexes.map(q => q[3]), function(a, b) { return a + b; }, 0);
+		indexes.push(['total', '', '', sum ])
+		this.erpDjamel = indexes;
+	};
+	fileReader.readAsArrayBuffer(this.file); 
+  }
+
+  downloaderpDjamel() {
+	const ws: XLSX.WorkSheet = XLSX.utils.aoa_to_sheet(this.erpDjamel);
+	const wb: XLSX.WorkBook = XLSX.utils.book_new();
+	XLSX.utils.book_append_sheet(wb, ws, 'Sheet1');
+
+	XLSX.writeFile(wb, `erp Djamel.xlsx`);
   }
   
   getTTCPrice(id, sum) {

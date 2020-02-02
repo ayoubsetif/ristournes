@@ -8,6 +8,20 @@
 	(click)="obtn.click()"
 >Importer les achats</button>
 
+<input hidden type='file' #erptn accept=".xlsx" (change)="uploadERPFile($event)">
+<button
+	mat-raised-button
+	color="primary"
+	(click)="erptn.click()"
+>ERP DJAMEL</button>
+
+<button
+	mat-raised-button
+	color="primary"
+	[disabled] = "!erpDjamel.length"
+	(click)="downloaderpDjamel()"
+>Imprimer erp Djamel</button>
+
 <button
 	class="import-config"
 	mat-raised-button
