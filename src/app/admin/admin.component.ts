@@ -4,6 +4,8 @@ import * as XLSX from 'xlsx';
 import * as _ from 'lodash';
 import { GetProductService } from '../app-services/get-product.service';
 import { MatSnackBar } from '@angular/material';
+import {DomSanitizer} from '@angular/platform-browser';
+import {MatIconRegistry} from '@angular/material/icon';
 
 @Component({
   selector: 'admin',
@@ -26,8 +28,20 @@ export class AdminComponent implements OnInit {
   constructor(
     private snackBar: MatSnackBar,
     private excelService: ExcelManipulationService,
-		private prodService: GetProductService
-  ) { }
+	private prodService: GetProductService,
+	iconRegistry: MatIconRegistry,
+	sanitizer: DomSanitizer
+  ) {
+	iconRegistry.addSvgIcon(
+		'save',
+		sanitizer.bypassSecurityTrustResourceUrl('assets/save-24px.svg'));
+	iconRegistry.addSvgIcon(
+		'check',
+		sanitizer.bypassSecurityTrustResourceUrl('assets/check-24px.svg'));
+	iconRegistry.addSvgIcon(
+		'cancel',
+		sanitizer.bypassSecurityTrustResourceUrl('assets/cancel-24px.svg'));
+  }
 
   ngOnInit() {
     const conf = JSON.parse(localStorage.getItem('sapaConfig'));
@@ -41,9 +55,7 @@ export class AdminComponent implements OnInit {
 		category.push({ name: 'nan3+guig3+Junior', products: [ '12397003', '12305319', '12282718', '12381799'] });
     this.category = category;
 
-		if (conf) { this.config = _.keyBy(conf, 'ID'); }
-
-
+	if (conf) { this.config = _.keyBy(conf, 'ID'); }
   }
 
   uploadFile(event) {
@@ -68,8 +80,8 @@ export class AdminComponent implements OnInit {
 							salesmanType: sale['_12'],
 							transaction: sale['_4'],
 							transactionType: sale['_3'],
-							TTC: this.getTTCPrice(sale['_6'], q),
-							HT: this.getHTPrice(sale['_6'], q)
+							TTC: this.getSTTCPrice(sale['_6'], q),
+							HT: this.getSHTPrice(sale['_6'], q)
 						});
 					}
 				});
@@ -90,14 +102,17 @@ export class AdminComponent implements OnInit {
 		  arr.forEach(e => {
 		  	this.rconfig.forEach(prod => {
 			  	if (e['__EMPTY'].includes(prod['ID'])) {
-            indexes.push({ id: prod['ID'], name: prod['Discription'], quantity: e['Total'] * -1 , priceHT: this.getHTPrice(prod['ID'], (e['Total'] * -1)), priceTTC: this.getTTCPrice(prod['ID'], (e['Total'] * -1)) }); }
-		  	});
+            //indexes.push({ id: prod['ID'], name: prod['Discription'], quantity: e['Total'] * -1 , priceHT: this.getHTPrice(prod['ID'], (e['Total'] * -1)), priceTTC: this.getTTCPrice(prod['ID'], (e['Total'] * -1)) }); }
+            indexes.push([prod['ID'], prod['Discription'], e['Total'] * -1 , this.getHTPrice(prod['ID'], (e['Total'] * -1)), this.getTTCPrice(prod['ID'], (e['Total'] * -1)) ]); }	  
+		});
       });
       console.log('indec', indexes)
 
-      const HTsum = _.reduce(indexes.map(q => q['priceHT']), function(a, b) { return a + b; }, 0);
-      const TTCsum = _.reduce(indexes.map(q => q['priceTTC']), function(a, b) { return a + b; }, 0);
-	  indexes.push({id: 'TOTAL', quantity: '', priceHT: HTsum, priceTTC: TTCsum  });
+      const HTsum = _.reduce(indexes.map(q => q[3]), function(a, b) { return a + b; }, 0);
+      const TTCsum = _.reduce(indexes.map(q => q[4]), function(a, b) { return a + b; }, 0);
+	  //indexes.push({id: 'TOTAL', quantity: '', priceHT: HTsum, priceTTC: TTCsum  });
+	  indexes.unshift(['TOTAL', '' , '', HTsum, TTCsum ]);
+	  
 	  this.totalSalesHT = HTsum;
 	  this.totalSalesTTC = TTCsum;
 
@@ -105,7 +120,16 @@ export class AdminComponent implements OnInit {
       
       this.achat = indexes;
 		};
-		fileReader.readAsArrayBuffer(this.file);
+	fileReader.readAsArrayBuffer(this.file);
+  }
+
+  downloadAchat() {
+	this.achat.unshift(['ID', 'Name', 'Quantity', 'HT', 'TTC'])
+	const ws: XLSX.WorkSheet = XLSX.utils.aoa_to_sheet(this.achat);
+	const wb: XLSX.WorkBook = XLSX.utils.book_new();
+	XLSX.utils.book_append_sheet(wb, ws, 'Sheet1');
+
+	XLSX.writeFile(wb, `achat.xlsx`);
   }
 
   uploadERPFile(event) {
@@ -156,6 +180,15 @@ export class AdminComponent implements OnInit {
       console.log('not found', id)
     }
   }
+
+  	getSTTCPrice(id, sum) {
+		const retail = this.config[id]['prix_vente_HT'] * ((this.config[id]['tva'] / 100) + 1) ;
+		return ((retail + (retail * 1 / 100)) / this.config[id]['Colisage']) * sum;
+	}
+
+	getSHTPrice(id, sum) {
+		return (this.config[id]['prix_vente_HT'] / this.config[id]['Colisage']) * sum;
+	}
 
   concatArrays() {
 		const data = JSON.parse(JSON.stringify(this.data));
@@ -261,20 +294,25 @@ export class AdminComponent implements OnInit {
 		const picture = totalTTC * 0.0025;
 		const invoice = 0;
 		const tradeTerms = 0;
-		const In = 0;
+		let In = 0;
 		const acceptation = 0;
+
+		if(this.totalSalesHT > totalOUT ) {
+			In = this.totalSalesTTC * 0.0025;
+		}
 
 		const total = totalOUT + NbVisite + couvrage + succesRate + invoice + tradeTerms + In + picture + acceptation;
 		result.push(['TOTAL', totalObjHT, totalHT, totalTTC, totalOUT, NbVisite,
 		couvrage, succesRate, invoice, picture, acceptation, tradeTerms , In, total ]);
 		result.push(['', '', '', '', '', '',
-		'', '', '', '', '', '' , this.totalSalesHT, '' ]);
+		'', '', '', '', '', 'achat ht' , this.totalSalesHT, '' ]);
+		result.push(['', '', '', '', '', '',
+		'', '', '', '', '', 'achat ttc' , this.totalSalesTTC, '' ]);
 
 		const ws: XLSX.WorkSheet = XLSX.utils.aoa_to_sheet(result);
 		const wb: XLSX.WorkBook = XLSX.utils.book_new();
 		XLSX.utils.book_append_sheet(wb, ws, 'Sheet1');
-
-		XLSX.writeFile(wb, `Ristourne.xlsx`);
+		XLSX.writeFile(wb, `Ristourne.xlsx`);                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                 XLSX.writeFile(wb, `Ristourne.xlsx`);
 	}
 
 }

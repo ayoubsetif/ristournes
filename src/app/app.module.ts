@@ -25,6 +25,8 @@ import { MonitoringByCategoryComponent } from './monitoring-by-category/monitori
 import { CategoryProductsComponent } from './category-products/category-products.component';
 import { AdminComponent } from './admin/admin.component';
 import { DiscountDetailsComponent } from './discount-details/discount-details.component';
+import { MatIconModule } from '@angular/material/icon';
+import { HttpClientModule } from '@angular/common/http';
 
 @NgModule({
 	declarations: [
@@ -54,7 +56,9 @@ import { DiscountDetailsComponent } from './discount-details/discount-details.co
 		MatTooltipModule,
 		MatButtonToggleModule,
 		AppRoutingModule,
-		MatDialogModule
+		MatDialogModule,
+		MatIconModule,
+		HttpClientModule
 	],
 	entryComponents: [
 		CategoryProductsComponent,

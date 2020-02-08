@@ -1,4 +1,27 @@
+<h4>{{data.name}}</h4>
+<h3>Détail</h3>
 <table mat-table [dataSource]="discount" class="mat-elevation-z8">
+
+    <ng-container matColumnDef="discount">
+		<th mat-header-cell *matHeaderCellDef> discount </th>
+		<td [matTooltip]="element.quantityCS" mat-cell *matCellDef="let element"> {{element.discount }} </td>
+	</ng-container>
+
+	<ng-container matColumnDef="quantityCS">
+		<th mat-header-cell *matHeaderCellDef> Quantity(CS) </th>
+		<td [matTooltip]="element.quantityCS" mat-cell *matCellDef="let element"> {{element.totalcs | floor: 3 }} </td>
+	</ng-container>
+
+	<ng-container matColumnDef="quantityEA">
+		<th mat-header-cell *matHeaderCellDef> Quantity(EA) </th>
+		<td [matTooltip]="element.quantityEA" mat-cell *matCellDef="let element"> {{element.totalea | floor: 3}} </td>
+	</ng-container>
+	
+	<tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+	<tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
+</table>
+<h3>Global</h3>
+<table mat-table [dataSource]="discountDetail" class="mat-elevation-z8">
 
     <ng-container matColumnDef="discount">
 		<th mat-header-cell *matHeaderCellDef> discount </th>

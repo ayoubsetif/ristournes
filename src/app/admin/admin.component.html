@@ -1,36 +1,64 @@
-<input hidden  type='file' #dmsbtn accept=".xlsx" (change)="uploadFile($event)">
-<button mat-raised-button color="primary" (click)="dmsbtn.click()">Import Document Listing</button>
 
-<input hidden type='file' #obtn accept=".xlsx" (change)="uploadSalesFile($event)">
-<button
-	mat-raised-button
-	color="primary"
-	(click)="obtn.click()"
->Importer les achats</button>
+<div class="achat">
+	<h3>Les Achats</h3>
+	<div class="items">
+		<input hidden type='file' #obtn accept=".xlsx" (change)="uploadSalesFile($event)">
+		<button
+			mat-raised-button
+			color="primary"
+			(click)="obtn.click()"
+		>Importer les achats</button>
+		<mat-icon matChipRemove svgIcon="cancel" *ngIf="!achat.length" color="warn" >cancel</mat-icon>
+		<mat-icon matChipRemove svgIcon="check" *ngIf="achat.length" class="available" >check</mat-icon>
+		<button
+			mat-icon-button
+			class="download"
+			[disabled]="!achat.length"
+			(click)="downloadAchat()"
+		><mat-icon matChipRemove svgIcon="save" >save</mat-icon></button>
+	</div>
 
-<input hidden type='file' #erptn accept=".xlsx" (change)="uploadERPFile($event)">
-<button
-	mat-raised-button
-	color="primary"
-	(click)="erptn.click()"
->ERP DJAMEL</button>
 
-<button
-	mat-raised-button
-	color="primary"
-	[disabled] = "!erpDjamel.length"
-	(click)="downloaderpDjamel()"
->Imprimer erp Djamel</button>
+</div>
+<div class="erp-djamel">
+	<h3>Bénéfice Sapa</h3>
+	<div class="items">
+		<input hidden type='file' #erptn accept=".xlsx" (change)="uploadERPFile($event)">
+		<button
+			mat-raised-button
+			color="primary"
+			(click)="erptn.click()"
+		>Bénéfice Sapa</button>
+		<mat-icon matChipRemove svgIcon="cancel" *ngIf="!erpDjamel.length" color="warn" >cancel</mat-icon>
+		<mat-icon matChipRemove svgIcon="check" *ngIf="erpDjamel.length" class="available" >check</mat-icon>
+		<button
+			mat-icon-button
+			class="download"
+			[disabled] = "!erpDjamel.length"
+			(click)="downloaderpDjamel()"
+		><mat-icon matChipRemove svgIcon="save" >save</mat-icon></button>
+	</div>
+</div>
+<div class="ristournes">
+	<h3>Les ristournes</h3>
+	<div class="items">
+		<input hidden  type='file' #dmsbtn accept=".xlsx" (change)="uploadFile($event)">
+		<button mat-raised-button color="primary" (click)="dmsbtn.click()">Import Document Listing</button>
+	
+		<mat-icon matChipRemove svgIcon="cancel" *ngIf="!data.length" color="warn" >cancel</mat-icon>
+		<mat-icon matChipRemove svgIcon="check" *ngIf="data.length" class="available" >check</mat-icon>
+		<button
+		mat-icon-button
+		class="download"
+		[disabled] = "!data.length"
+		(click)="downloadRistourne()"
+		><mat-icon matChipRemove svgIcon="save" >save</mat-icon></button>
+	</div>
+</div>
 
-<button
-	class="import-config"
-	mat-raised-button
-	color="primary"
-	[disabled] = "!data.length"
-	(click)="downloadRistourne()"
->Imprimer les ristournes</button>
 
-<div *ngIf="achat.length">
+
+<!--<div *ngIf="achat.length">
 	<table mat-table [dataSource]="achat" class="mat-elevation-z8">
 		<ng-container matColumnDef="id">
 			<th mat-header-cell *matHeaderCellDef> ID  </th>
@@ -62,4 +90,5 @@
 		<tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
 		<tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
 	</table>
-</div>
+</div>-->
+
