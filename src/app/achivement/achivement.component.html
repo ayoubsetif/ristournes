@@ -46,6 +46,11 @@
 	[category] = "category"
 >
 </monitoring-by-category>
+<display-by-vendor
+	*ngIf="(displayAchByProd | async)?.length && displayTab[5]"
+	[products]="displayAchByProd | async"
+>
+</display-by-vendor>
 
 <avg-sku
 	*ngIf="avgSKU.length && displayTab[4]"

@@ -27,6 +27,7 @@ import { AdminComponent } from './admin/admin.component';
 import { DiscountDetailsComponent } from './discount-details/discount-details.component';
 import { MatIconModule } from '@angular/material/icon';
 import { HttpClientModule } from '@angular/common/http';
+import { DisplayByVendorComponent } from './display-by-vendor/display-by-vendor.component';
 
 @NgModule({
 	declarations: [
@@ -42,7 +43,8 @@ import { HttpClientModule } from '@angular/common/http';
 		MonitoringByCategoryComponent,
 		CategoryProductsComponent,
 		AdminComponent,
-		DiscountDetailsComponent
+		DiscountDetailsComponent,
+		DisplayByVendorComponent
 	],
 	imports: [
 		BrowserModule,
