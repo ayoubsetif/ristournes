@@ -47,7 +47,8 @@ export class RealisationProdComponent implements OnInit {
 	openDialog(data): void {
 		const dialogRef = this.dialog.open(DiscountDetailsComponent, {
 			width: '70%',
-			data: data
+			data: data,
+			panelClass: 'myapp-height-dialog'
 		});
 	}
 }

@@ -37,6 +37,14 @@
 			[disabled] = "!erpDjamel.length"
 			(click)="downloaderpDjamel()"
 		><mat-icon matChipRemove svgIcon="save" >save</mat-icon></button>
+
+		<button
+			mat-icon-button
+			*ngIf="data.length"
+			class="download-dms"
+			(click)="downloadBenefice()"
+		><mat-icon matChipRemove svgIcon="save" >save</mat-icon></button>
+		<p *ngIf="benificeDMS">Total: {{benificeDMS}}</p>
 	</div>
 </div>
 <div class="ristournes">

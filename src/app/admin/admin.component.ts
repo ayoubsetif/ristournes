@@ -23,7 +23,8 @@ export class AdminComponent implements OnInit {
   totalSalesHT = 0;
   totalSalesTTC = 0;
   erpDjamel = [];
-
+  benificeDMS = null;
+  warhouse = null;
 
   constructor(
     private snackBar: MatSnackBar,
@@ -68,9 +69,12 @@ export class AdminComponent implements OnInit {
 				const worksheet = this.excelService.readFile(fileReader);
 				const arr = XLSX.utils.sheet_to_json(worksheet, {raw: true });
 				const data = [];
+				//console.log('arr', arr)
+				this.warhouse = arr[4]['_2'];
 				_.drop(arr, 12).forEach(sale => {
 					if (sale[''] !== '') {
 						const q = this.getQuantity(sale['_6'], sale['__EMPTY_9'], sale['__EMPTY_10']);
+						const diff = Number(sale['__EMPTY_3'].split(',').join('')) - this.getRetailPrice(sale['_6']);
 						data.push({
 							id: sale['_6'],
 							name: sale['_7'],
@@ -81,7 +85,14 @@ export class AdminComponent implements OnInit {
 							transaction: sale['_4'],
 							transactionType: sale['_3'],
 							TTC: this.getSTTCPrice(sale['_6'], q),
-							HT: this.getSHTPrice(sale['_6'], q)
+							HT: this.getSHTPrice(sale['_6'], q),
+							basePrice: Number(sale['__EMPTY_3'].split(',').join('')),
+							retailPrice: this.getRetailPrice(sale['_6']),
+							diffPrice: diff,
+							diffPerUnit: this.getDiffPerUnit(sale['_6'],diff),
+							discount: sale['__EMPTY_6'],
+							diffAfterDiscount: this.getDiffAfterDiscount(this.getDiffPerUnit(sale['_6'],diff), sale['__EMPTY_6'], q).diff,
+							sumAfterDiscount: this.getDiffAfterDiscount(this.getDiffPerUnit(sale['_6'],diff), sale['__EMPTY_6'], q).sum
 						});
 					}
 				});
@@ -92,7 +103,7 @@ export class AdminComponent implements OnInit {
 		}
 	}
 
-  uploadSalesFile(event) {
+    uploadSalesFile(event) {
 		this.file = event.target.files[0];
 		const fileReader = new FileReader();
 		fileReader.onload = (e) => {
@@ -132,6 +143,43 @@ export class AdminComponent implements OnInit {
 	XLSX.writeFile(wb, `achat.xlsx`);
   }
 
+  downloadBenefice() {
+	const data = JSON.parse(JSON.stringify(this.data));
+	const a = data.filter(f => !f['salesmanType'].includes('Gros')).filter(f => f.diffPrice >= 1);
+	const arr = [];
+	a.forEach(l => {
+		arr.push([l['id'], l['name'], l['basePrice'], l['retailPrice'], l['discount'], l['quantityEA'], l['sumAfterDiscount']])
+	})
+	const sum = _.reduce(arr.map(q => q[6]), function(a, b) { return a + b; }, 0);
+	this.benificeDMS = sum;
+	arr.unshift(['ID', 'Name', 'BasePrice', 'RetailPrice', 'Discount','quantity', 'Total'],['TOTAL', '', '', '', '','', sum]);
+	
+	const ws: XLSX.WorkSheet = XLSX.utils.aoa_to_sheet(arr);
+	const wb: XLSX.WorkBook = XLSX.utils.book_new();
+	XLSX.utils.book_append_sheet(wb, ws, 'Sheet1');
+
+	XLSX.writeFile(wb, `Benifice.xlsx`);
+  }
+
+  getDiffAfterDiscount(diff, discount, q) {
+  	const inferiorDiscount = ['0.00%', '1.00%' , '0.50%' , '0.75%' , '1.25%' , '1.75%'];
+	const found = inferiorDiscount.find(f => f === discount);
+	if(!found) {
+		const d = diff - (diff * (Number(discount.split('%')[0]) / 100 ));
+		return {
+			diff: d,
+			sum: q * d
+		}
+	} else {
+		return {
+			diff: diff,
+			sum: q * diff
+		}
+	}
+
+
+  }
+
   uploadERPFile(event) {
 	this.file = event.target.files[0];
 	const fileReader = new FileReader();
@@ -162,24 +210,24 @@ export class AdminComponent implements OnInit {
 	XLSX.writeFile(wb, `erp Djamel.xlsx`);
   }
   
-  getTTCPrice(id, sum) {
-    const found = this.rconfig.find(f => f['ID'] === id);
-    if(found) {
-      const retail = found['prix_achat_HT'] * ((found['tva'] / 100) + 1) ;
-      return ((retail + (retail * 1 / 100)) / found['Colisage']) * sum;
-    } else {
-      console.log('not found', id)
-    }
+    getTTCPrice(id, sum) {
+    	const found = this.rconfig.find(f => f['ID'] === id);
+    	if(found) {
+      		const retail = found['prix_achat_HT'] * ((found['tva'] / 100) + 1) ;
+      		return ((retail + (retail * 1 / 100)) / found['Colisage']) * sum;
+   		 } else {
+     		 console.log('not found', id)
+    	}
 	}
 
 	getHTPrice(id, sum) {
-    const found = this.rconfig.find(f => f['ID'] === id);
-    if(found) {
-      return (found['prix_achat_HT'] / found['Colisage']) * sum;
-    } else {
-      console.log('not found', id)
+    	const found = this.rconfig.find(f => f['ID'] === id);
+    	if(found) {
+      		return (found['prix_achat_HT'] / found['Colisage']) * sum;
+    	} else {
+    		console.log('not found', id)
+    	}
     }
-  }
 
   	getSTTCPrice(id, sum) {
 		const retail = this.config[id]['prix_vente_HT'] * ((this.config[id]['tva'] / 100) + 1) ;
@@ -190,7 +238,16 @@ export class AdminComponent implements OnInit {
 		return (this.config[id]['prix_vente_HT'] / this.config[id]['Colisage']) * sum;
 	}
 
-  concatArrays() {
+	getRetailPrice(id) {
+		return this.config[id]['prix_vente_HT'];
+	}
+
+	getDiffPerUnit(id, diff) {
+		const retail = diff * ((this.config[id]['tva'] / 100) + 1) ;
+		return ((retail + (retail * 1 / 100)) / this.config[id]['Colisage']);
+	}
+
+    concatArrays() {
 		const data = JSON.parse(JSON.stringify(this.data));
 		const objectives = JSON.parse(localStorage.getItem('objectives'));
 		const ach = data.map(m => {
@@ -279,15 +336,16 @@ export class AdminComponent implements OnInit {
 		resultByCategory.forEach(ca => {
 			if (ca['name'] !== 'IF') {
 				const obj = [ca['name'], ca['objectiveHT'], ca['achievedHT'], ca['achievedTTC'], '', '', '', '', '', '', '', '', '', ''];
-				if (ca['achievedHT'] >= ca['objectiveHT']) {
-					obj[4] = ca['achievedTTC'] * 0.005;
+				if(ca['objectiveHT'] !== 0) {
+					if (ca['achievedHT'] >= ca['objectiveHT']) {
+						obj[4] = ca['achievedTTC'] * 0.005;
+					}
 				}
 				result.push(obj);
 			}
 		});
-
 		const totalOUT = _.reduce(_.compact(result.filter(f => !isNaN(f[4])).map(m => +m[4])), function(a, b) { return a + b; }, 0);
-
+		
 		const succesRate = totalTTC * 0.0025;
 		const NbVisite = totalTTC * 0.0025;
 		const couvrage = totalTTC * 0.0025;
@@ -296,11 +354,11 @@ export class AdminComponent implements OnInit {
 		const tradeTerms = 0;
 		let In = 0;
 		const acceptation = 0;
-
+		
 		if(this.totalSalesHT > totalOUT ) {
 			In = this.totalSalesTTC * 0.0025;
 		}
-
+		
 		const total = totalOUT + NbVisite + couvrage + succesRate + invoice + tradeTerms + In + picture + acceptation;
 		result.push(['TOTAL', totalObjHT, totalHT, totalTTC, totalOUT, NbVisite,
 		couvrage, succesRate, invoice, picture, acceptation, tradeTerms , In, total ]);
@@ -308,11 +366,11 @@ export class AdminComponent implements OnInit {
 		'', '', '', '', '', 'achat ht' , this.totalSalesHT, '' ]);
 		result.push(['', '', '', '', '', '',
 		'', '', '', '', '', 'achat ttc' , this.totalSalesTTC, '' ]);
-
-		const ws: XLSX.WorkSheet = XLSX.utils.aoa_to_sheet(result);
-		const wb: XLSX.WorkBook = XLSX.utils.book_new();
-		XLSX.utils.book_append_sheet(wb, ws, 'Sheet1');
-		XLSX.writeFile(wb, `Ristourne.xlsx`);                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                 XLSX.writeFile(wb, `Ristourne.xlsx`);
+		
+		const w: XLSX.WorkSheet = XLSX.utils.aoa_to_sheet(result);
+		const b: XLSX.WorkBook = XLSX.utils.book_new();
+		XLSX.utils.book_append_sheet(b, w, 'ristoure');
+		XLSX.writeFile(b, `Ristourne-${this.warhouse}.xlsx`);
 	}
 
 }
