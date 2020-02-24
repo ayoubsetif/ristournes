@@ -1,0 +1,11 @@
+<input hidden  type='file' #dmsbtn accept=".xlsx" (change)="uploadFile($event)">
+<button mat-raised-button color="primary" (click)="dmsbtn.click()">Import Document Listing</button>
+
+	
+<button
+    mat-raised-button
+    color="accent"
+	[disabled]="!data.length"
+	class="download-dms"
+	(click)="download()"
+>Download</button>

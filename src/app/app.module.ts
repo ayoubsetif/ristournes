@@ -28,6 +28,7 @@ import { DiscountDetailsComponent } from './discount-details/discount-details.co
 import { MatIconModule } from '@angular/material/icon';
 import { HttpClientModule } from '@angular/common/http';
 import { DisplayByVendorComponent } from './display-by-vendor/display-by-vendor.component';
+import { TradeTermComponent } from './trade-term/trade-term.component';
 
 @NgModule({
 	declarations: [
@@ -44,7 +45,8 @@ import { DisplayByVendorComponent } from './display-by-vendor/display-by-vendor.
 		CategoryProductsComponent,
 		AdminComponent,
 		DiscountDetailsComponent,
-		DisplayByVendorComponent
+		DisplayByVendorComponent,
+		TradeTermComponent
 	],
 	imports: [
 		BrowserModule,
