@@ -355,7 +355,7 @@ export class AdminComponent implements OnInit {
 		let In = 0;
 		const acceptation = 0;
 		
-		if(this.totalSalesHT > totalOUT ) {
+		if(this.totalSalesHT > totalObjHT ) {
 			In = this.totalSalesTTC * 0.0025;
 		}
 		
