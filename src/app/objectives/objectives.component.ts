@@ -39,7 +39,7 @@ export class ObjectivesComponent implements OnInit {
 		Object.keys(g).map(m => {
 			category.push({name: m, products: g[m].map(n => n['ID']) });
 		});
-		category.push({ name: 'nan3+guig3+Junior', products: [ '12397003', '12305319', '12282718', '12381799'] });
+		category.push({ name: 'nan3+guig3+Junior', products: [ '12397003', '12305319', '12282718', '12381799', '12416974', '12429224'] });
 		this.category = category;
 	}
 
