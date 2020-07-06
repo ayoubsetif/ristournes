@@ -37,17 +37,17 @@ export class SalesmanPerformanceComponent implements OnInit {
           if (v['B/A'] !== '') {
             console.log('v', v)
             data.push({
-              id: v['__EMPTY_1'],
-              name: v['__EMPTY_2'],
-              type: v['__EMPTY_6'],
-              bdd: v['__EMPTY_7'],
-              visitedExtra: v['__EMPTY_10'],
-              visitedPlan: v['__EMPTY_11'],
-              Itenerary: v['__EMPTY_9'],
-              HitRateVisited: v['__EMPTY_12'],
-              HitRateExtra: v['__EMPTY_13'],
-              SuccessRate: Math.round(((v['__EMPTY_12'] + v['__EMPTY_13'] ) / v['__EMPTY_9']) * 100),
-              VisiteRate: Math.round(((v['__EMPTY_10'] + v['__EMPTY_11']) / v['__EMPTY_9']) * 100)
+              id: v['_1'],
+              name: v['_2'],
+              type: v['_6'],
+              bdd: v['_7'],
+              visitedExtra: v['_10'],
+              visitedPlan: v['_11'],
+              Itenerary: v['_9'],
+              HitRateVisited: v['_12'],
+              HitRateExtra: v['_13'],
+              SuccessRate: Math.round(((v['_12'] + v['_13'] ) / v['_9']) * 100),
+              VisiteRate: Math.round(((v['_10'] + v['_11']) / v['_9']) * 100)
             })
           };
         });
