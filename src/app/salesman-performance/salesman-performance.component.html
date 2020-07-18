@@ -3,8 +3,77 @@
 <div class="vi-btns">
 	<input hidden  type='file' #dmsbtn accept=".xlsx" (change)="uploadFile($event)">
 	<button mat-raised-button color="primary" (click)="dmsbtn.click()">Import Salesman Performance</button>
+
+	<input hidden  type='file' #dbtn accept=".xlsx" (change)="uploadSalesFile($event)">
+	<button mat-raised-button color="primary" [disabled]="!data.length" (click)="dbtn.click()">Import Document Listing</button>
+</div>
+<div class="note">
+	<h6>PS1: Importation de salesman performance calcule taux de visite, taux de succes.</h6>
+	<h6>PS2: Importation de document listing ajoute le calcule de taux de couverture.</h6>
 </div>
 
+<h4 *ngIf="allData.length">Résumé</h4>
+<table mat-table [dataSource]="allData" class="mat-elevation-z8" *ngIf="allData.length">
+	<ng-container matColumnDef="type">
+		<th mat-header-cell *matHeaderCellDef> Type </th>
+		<td mat-cell  *matCellDef="let element"> {{element.type }}</td>
+	</ng-container>
+	
+	<ng-container matColumnDef="bdd">
+		<th mat-header-cell *matHeaderCellDef> BDD </th>
+		<td [matTooltip]="element.HT" mat-cell *matCellDef="let element"> {{element.bdd }} </td>
+	</ng-container>
+
+	<ng-container matColumnDef="activeCoverage">
+		<th mat-header-cell *matHeaderCellDef> active Coverage </th>
+		<td [matTooltip]="element.HT" mat-cell *matCellDef="let element"> {{element.activeCoverage }} </td>
+	</ng-container>
+
+	<ng-container matColumnDef="visitedPlan">
+		<th mat-header-cell *matHeaderCellDef> visited Plan </th>
+		<td mat-cell *matCellDef="let element"> {{element.visitedPlan }} </td>
+	</ng-container>
+
+	<ng-container matColumnDef="visitedExtra">
+		<th mat-header-cell *matHeaderCellDef> visited Extra </th>
+		<td mat-cell *matCellDef="let element"> {{element.visitedExtra }} </td>
+    </ng-container>
+    
+    <ng-container matColumnDef="HitRateVisited">
+		<th mat-header-cell *matHeaderCellDef> HitRate Visited </th>
+		<td mat-cell *matCellDef="let element"> {{element.HitRateVisited }}</td>
+    </ng-container>
+    
+    <ng-container matColumnDef="HitRateExtra">
+		<th mat-header-cell *matHeaderCellDef> HitRateExtra </th>
+		<td mat-cell *matCellDef="let element"> {{element.HitRateExtra }} </td>
+    </ng-container>
+    
+    <ng-container matColumnDef="Itenerary">
+		<th mat-header-cell *matHeaderCellDef> Itenerary </th>
+		<td mat-cell *matCellDef="let element"> {{element.Itenerary }} </td>
+    </ng-container>
+    
+    <ng-container matColumnDef="VisiteRate">
+		<th mat-header-cell *matHeaderCellDef> Visite Rate </th>
+		<td mat-cell *matCellDef="let element"> {{element.VisiteRate }} % </td>
+    </ng-container>
+    
+    <ng-container matColumnDef="SuccessRate">
+		<th mat-header-cell *matHeaderCellDef> Success Rate </th>
+		<td mat-cell *matCellDef="let element"> {{element.SuccessRate }} % </td>
+	</ng-container>
+
+	<ng-container matColumnDef="CoverageRate">
+		<th mat-header-cell *matHeaderCellDef> Coverage Rate </th>
+		<td mat-cell *matCellDef="let element"> {{element.CoverageRate }} % </td>
+	</ng-container>
+	
+	<tr mat-header-row *matHeaderRowDef="displayedAllColumns"></tr>
+	<tr mat-row *matRowDef="let row; columns: displayedAllColumns;"></tr>
+</table>
+
+<h4 *ngIf="data.length">Détaillé</h4>
 <table mat-table [dataSource]="data" class="mat-elevation-z8" *ngIf="data.length">
 	<ng-container matColumnDef="id">
 		<th mat-header-cell *matHeaderCellDef> ID  </th>
@@ -26,18 +95,23 @@
 		<td [matTooltip]="element.HT" mat-cell *matCellDef="let element"> {{element.bdd }} </td>
 	</ng-container>
 
+	<ng-container matColumnDef="activeCoverage">
+		<th mat-header-cell *matHeaderCellDef> active Coverage </th>
+		<td [matTooltip]="element.HT" mat-cell *matCellDef="let element"> {{element.activeCoverage }} </td>
+	</ng-container>
+
 	<ng-container matColumnDef="visitedPlan">
 		<th mat-header-cell *matHeaderCellDef> visited Plan </th>
 		<td mat-cell *matCellDef="let element"> {{element.visitedPlan }} </td>
 	</ng-container>
 
 	<ng-container matColumnDef="visitedExtra">
-		<th mat-header-cell *matHeaderCellDef> visitedExtra </th>
+		<th mat-header-cell *matHeaderCellDef> visited Extra </th>
 		<td mat-cell *matCellDef="let element"> {{element.visitedExtra }} </td>
     </ng-container>
     
     <ng-container matColumnDef="HitRateVisited">
-		<th mat-header-cell *matHeaderCellDef> HitRateVisited </th>
+		<th mat-header-cell *matHeaderCellDef> HitRate Visited </th>
 		<td mat-cell *matCellDef="let element"> {{element.HitRateVisited }}</td>
     </ng-container>
     
@@ -52,13 +126,18 @@
     </ng-container>
     
     <ng-container matColumnDef="VisiteRate">
-		<th mat-header-cell *matHeaderCellDef> VisiteRate </th>
+		<th mat-header-cell *matHeaderCellDef> Visite Rate </th>
 		<td mat-cell *matCellDef="let element"> {{element.VisiteRate }} % </td>
     </ng-container>
     
     <ng-container matColumnDef="SuccessRate">
-		<th mat-header-cell *matHeaderCellDef> SuccessRate </th>
+		<th mat-header-cell *matHeaderCellDef> Success Rate </th>
 		<td mat-cell *matCellDef="let element"> {{element.SuccessRate }} % </td>
+	</ng-container>
+
+	<ng-container matColumnDef="CoverageRate">
+		<th mat-header-cell *matHeaderCellDef> Coverage Rate </th>
+		<td mat-cell *matCellDef="let element"> {{element.CoverageRate }} % </td>
 	</ng-container>
 	
 	<tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
