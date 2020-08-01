@@ -39,7 +39,6 @@ export class ObjectivesComponent implements OnInit {
 		Object.keys(g).map(m => {
 			category.push({name: m, products: g[m].map(n => n['ID']) });
 		});
-		category.push({ name: 'nan3+guig3+Junior', products: [ '12397003', '12305319', '12282718', '12381799', '12416974', '12429224'] });
 		this.category = category;
 	}
 
@@ -71,11 +70,11 @@ export class ObjectivesComponent implements OnInit {
 		const objectives = [];
 		this.data.filter(f => f['Nom Distributeurs'] === event.value).forEach(obj => {
 			objectives.push({
-				salesmanType: obj['Canal'],
-				category: obj['Categorie'],
+				salesmanType: this.getSalesmanType(obj['Canal'])  ,
+				category: obj['Categories'],
 				name: this.getProduct(obj['SKU']).name,
 				id: this.getProduct(obj['SKU']).id,
-				SubCategory: obj['Sous catégorie'],
+				SubCategory: obj['Sous categories'],
 				quantityCS: obj['Cs'],
 				quantityEA: 0,
 				// initialy i met quantityEA & TTC to 0 to minimise test
@@ -90,6 +89,14 @@ export class ObjectivesComponent implements OnInit {
 			ob['quantityEA'] = this.getQuantityEA(ob['id'], ob['quantityCS']);
 			ob['TTC'] = this.getCATTC(ob['id'], ob['HT'] );
 		});
+	}
+
+	getSalesmanType(value) {
+		if(value === 'GROS') {
+			return 'Gros'
+		} else {
+			return 'Detail'
+		}
 	}
 
 	getProduct(value) {

@@ -13,6 +13,7 @@ export class DisplayProductsComponent implements OnInit {
 	@Input() products: any[];
 	@Input() type: any;
 	@Input() category: any;
+	//canal: string;
 
 	canalType = [
 		{ id: 0, name: 'ALL'},
@@ -24,7 +25,9 @@ export class DisplayProductsComponent implements OnInit {
 	displayedColumns: string[] = ['name', 'TTC', 'HT', 'quantityCS', 'quantityEA', 'details'];
 	constructor(private getProductService: GetProductService, private dialog: MatDialog) { }
 
-	ngOnInit() { }
+	ngOnInit() {
+		//if(this.type === 'objective') { this.canal = 'GROS'	} else { this.canal = 'Gros' } 
+	}
 
 	ngOnChanges() {
 		const data =	JSON.parse(JSON.stringify(this.products));

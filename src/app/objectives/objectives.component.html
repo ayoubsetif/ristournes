@@ -2,7 +2,7 @@
 <h4 class="vs-title">Objectives</h4>
 
 <div class="vi-btns">
-	<input hidden type='file' #obtn accept=".xlsx" (change)="uploadObjectiveFile($event)">
+	<input hidden type='file' #obtn (change)="uploadObjectiveFile($event)">
 	<button
 		mat-raised-button
 		color="primary"

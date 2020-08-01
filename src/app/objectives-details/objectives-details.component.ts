@@ -41,7 +41,7 @@ export class ObjectivesDetailsComponent implements OnInit {
 				this.tab = this.getProductService.getProduct(data.products.filter(f => f['salesmanType'] === 'Gros'));
 				break;
 			case 2:
-				this.tab = this.getProductService.getProduct(data.products.filter(f => f['salesmanType'] === 'Detail'));
+				this.tab = this.getProductService.getProduct(data.products.filter(f => f['salesmanType'] !== 'Gros'));
 				break;
 
 			default:
