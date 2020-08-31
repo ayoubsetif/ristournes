@@ -41,7 +41,7 @@ export class TradeTermComponent implements OnInit {
 				_.drop(arr, 12).forEach(sale => {
 					if (sale[''] !== '') {
             if(sale['__EMPTY_6'] !== '0.00%') {
-              const discount = Number(sale['__EMPTY_6'].split('%')[0])
+              const discount = Number(sale['__EMPTY_6'].split('%')[0]);
               data.push({
                 id: sale['_6'],
                 name: sale['_7'],
@@ -49,7 +49,7 @@ export class TradeTermComponent implements OnInit {
                 client: sale['_1'],
                 discount: discount,
                 price: Number(sale['__EMPTY_4'].split(',').join('')),
-                tradeTermDiscount: this.getTradeTermDiscount(discount, sale['_6'])
+                tradeTermDiscount: this.getTradeTermDiscount(discount, sale['_6'], sale['_12'] )
               });
             }
           }
@@ -68,7 +68,11 @@ export class TradeTermComponent implements OnInit {
   }
 
 
-  getTradeTermDiscount(discount, id) {
+  getTradeTermDiscount(discount, id, vendorType) {
+    if(id == '12397003' && vendorType === 'Vendeur Gros' ) {
+      id = id + 'G';
+    }
+
   	const inferiorDiscount = [ 1 , 0.5 , 0.75 , 1.25 , 1.75];
     const found = inferiorDiscount.find(f => f === discount);
 	  if(found) {
