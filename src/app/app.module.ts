@@ -30,6 +30,7 @@ import { HttpClientModule } from '@angular/common/http';
 import { DisplayByVendorComponent } from './display-by-vendor/display-by-vendor.component';
 import { TradeTermComponent } from './trade-term/trade-term.component';
 import { SalesmanPerformanceComponent } from './salesman-performance/salesman-performance.component';
+import { MonitoringByVendorComponent } from './monitoring-by-vendor/monitoring-by-vendor.component';
 
 @NgModule({
 	declarations: [
@@ -48,7 +49,8 @@ import { SalesmanPerformanceComponent } from './salesman-performance/salesman-pe
 		DiscountDetailsComponent,
 		DisplayByVendorComponent,
 		TradeTermComponent,
-		SalesmanPerformanceComponent
+		SalesmanPerformanceComponent,
+		MonitoringByVendorComponent
 	],
 	imports: [
 		BrowserModule,

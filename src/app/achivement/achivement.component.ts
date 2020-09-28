@@ -19,7 +19,7 @@ export class AchivementComponent implements OnInit {
 	realizationByCat = [];
 	realizationByProd = [];
 	data = [];
-	displayTab = [ false, false, false, false, false ];
+	displayTab = [ false, false, false, false, false, false ];
 	displayAchByProd = new ReplaySubject<any>(1);
 	monitorAchByProd = new ReplaySubject<any>(1);
 	avgSKU = [];
@@ -29,8 +29,9 @@ export class AchivementComponent implements OnInit {
 		{ id: 0, name: 'Réalisation par catégorie' },
 		{ id: 1, name: 'réalisation par porduit' },
 		{ id: 5, name: 'réalisation par vendeur' },
-		{ id: 2, name: 'Suivi de realisation par porduit' },
-		{ id: 3, name: 'Suivi de realisation par categorie' },
+		{ id: 6, name: 'Suivi de réalisation par vendeur' },
+		{ id: 2, name: 'Suivi de réalisation par porduit' },
+		{ id: 3, name: 'Suivi de réalisation par categorie' },
 		{ id: 4, name: 'Avg SKU' },
 	];
 
@@ -96,18 +97,23 @@ export class AchivementComponent implements OnInit {
 	displayAchievementByProd() {
 		const data = JSON.parse(JSON.stringify(this.data));
 		this.displayAchByProd.next(data);
-		this.displayTab = [true, false, false, false, false, false];
+		this.displayTab = [true, false, false, false, false, false, false];
 	}
 
-	displayAchievementByVendor() {
+	displayAchievementByVendor(suivi: boolean) {
 		const data = JSON.parse(JSON.stringify(this.data));
 		this.displayAchByProd.next(data);
-		this.displayTab = [false, false, false, false, false, true];
+		if(suivi) {
+			this.displayTab = [false, false, false, false, false, true, false];
+		}
+		else {
+			this.displayTab = [false, false, false, false, false, false, true];
+		}
 	}
 
 	displayAchievementByCat() {
 		this.displayAchByProd.next(JSON.parse(JSON.stringify(this.data)));
-		this.displayTab = [false, true, false, false, false, false];
+		this.displayTab = [false, true, false, false, false, false, false];
 	}
 
 	concatArrays() {
@@ -149,13 +155,13 @@ export class AchivementComponent implements OnInit {
 	displaySuivi() {
 		const conc = this.concatArrays();
 		this.monitorAchByProd.next(conc);
-		this.displayTab = [false, false, true, false, false, false];
+		this.displayTab = [false, false, true, false, false, false, false];
 	}
 
 	displaySuiviCategory() {
 		const conc = this.concatArrays();
 		this.monitorAchByProd.next(conc);
-		this.displayTab = [false, false, false, true, false, false];
+		this.displayTab = [false, false, false, true, false, false, false];
 	}
 
 	getProduct(data) {
@@ -195,7 +201,7 @@ export class AchivementComponent implements OnInit {
 		console.log('avg', avgSku);
 		this.avgSKU = avgSku;
 
-		this.displayTab = [false, false, false, false, true, false];
+		this.displayTab = [false, false, false, false, true, false, false];
 	}
 
 	getQuantity(id, quantity, uom) {
@@ -257,14 +263,17 @@ export class AchivementComponent implements OnInit {
 			case 2:
 				this.displaySuivi();
 				break;
-				case 3:
+			case 3:
 				this.displaySuiviCategory();
 				break;
 			case 4:
 				this.getAVGSKU();
 				break;
 			case 5:
-				this.displayAchievementByVendor();
+				this.displayAchievementByVendor(true);
+				break;
+			case 6:
+				this.displayAchievementByVendor(false);
 				break;
 
 			default:

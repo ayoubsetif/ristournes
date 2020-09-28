@@ -1,0 +1,54 @@
+<h3>Suivi de réalisation par vendeur</h3>
+
+<mat-form-field>
+	<mat-select (selectionChange)="selectVendor($event)"  placeholder="Choisir Vendeur">
+		<mat-option *ngFor="let vendor of vendors" [value]="vendor">
+			{{vendor}}
+		</mat-option>
+	</mat-select>
+</mat-form-field>
+
+<table  mat-table [dataSource]="tab" class="mat-elevation-z8">
+	<ng-container matColumnDef="id">
+		<th mat-header-cell *matHeaderCellDef> ID  </th>
+		<td mat-cell *matCellDef="let element"> {{element.id}} </td>
+	</ng-container>
+
+	<ng-container matColumnDef="name">
+		<th mat-header-cell *matHeaderCellDef> Name  </th>
+		<td mat-cell *matCellDef="let element"> {{element.name}} </td>
+	</ng-container>
+
+	<ng-container matColumnDef="objectivesHT">
+		<th mat-header-cell *matHeaderCellDef> Objectif (HT) </th>
+		<td [matTooltip]="element.objectiveHT" mat-cell *matCellDef="let element"> {{element.objectiveHT | floor: 3}} </td>
+	</ng-container>
+
+	<ng-container matColumnDef="objectivesTTC">
+		<th mat-header-cell *matHeaderCellDef> Objectif (TTC) </th>
+		<td [matTooltip]="element.objectiveTTC" mat-cell *matCellDef="let element"> {{element.objectiveTTC | floor: 3}} </td>
+	</ng-container>
+
+	<ng-container matColumnDef="achievedHT">
+		<th mat-header-cell *matHeaderCellDef> Réalisation (HT) </th>
+		<td [matTooltip]="element.achievedHT" mat-cell  *matCellDef="let element"> {{element.achievedHT | floor: 3 }}</td>
+	</ng-container>
+
+	<ng-container matColumnDef="achievedTTC">
+		<th mat-header-cell *matHeaderCellDef> Réalisation (TTC) </th>
+		<td [matTooltip]="element.achievedTTC" mat-cell  *matCellDef="let element"> {{element.achievedTTC | floor: 3 }}</td>
+	</ng-container>
+
+	<ng-container matColumnDef="Progression">
+		<th mat-header-cell *matHeaderCellDef> Progression </th>
+		<td mat-cell *matCellDef="let element"> {{element.progressionNPS }} %</td>
+	</ng-container>
+
+	<ng-container matColumnDef="GAP">
+		<th mat-header-cell *matHeaderCellDef> GAP (HT) </th>
+		<td mat-cell  *matCellDef="let element"> {{element.gapNPS | floor: 3 }}</td>
+	</ng-container>
+	
+	<tr mat-header-row *matHeaderRowDef="displayed"></tr>
+	<tr  mat-row *matRowDef="let row; columns: displayed;" [ngClass]="{'red-back ': row.progressionNPS < 100, 'green-back': row.progressionNPS > 100, 'yellow-back': row.objectiveHT === 0 }"></tr>
+</table>
