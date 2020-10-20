@@ -29,7 +29,7 @@ export class AchivementComponent implements OnInit {
 		{ id: 0, name: 'Réalisation par catégorie' },
 		{ id: 1, name: 'réalisation par porduit' },
 		{ id: 5, name: 'réalisation par vendeur' },
-		{ id: 6, name: 'Suivi de réalisation par vendeur' },
+		{ id: 6, name: 'Suivi de réalisation par vendeur(WIP)' },
 		{ id: 2, name: 'Suivi de réalisation par porduit' },
 		{ id: 3, name: 'Suivi de réalisation par categorie' },
 		{ id: 4, name: 'Avg SKU' },

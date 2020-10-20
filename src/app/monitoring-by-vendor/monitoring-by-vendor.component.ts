@@ -10,44 +10,89 @@ export class MonitoringByVendorComponent implements OnInit {
   @Input() products: any[];
   vendors = [];
   tab = [];
+  catTab = [];
   config = {};
-	displayed: string[] = ['id', 'name', 'objectivesHT', 'achievedHT', 'objectivesTTC', 'achievedTTC', 'Progression', 'GAP'];
+  displayed: string[] = ['id', 'name', 'objectivesHT', 'achievedHT', 'objectivesTTC', 'achievedTTC', 'Progression', 'GAP'];
+  displayBy = [ true , false ];
+  categories = [];
+  displayedByVendor = [];
 
   constructor() { }
 
   ngOnInit() {
-    const conf = JSON.parse(localStorage.getItem('sapaConfig'));
-    this.config = _.keyBy(conf, 'ID');
-    this.vendors = _.uniq(this.products.map(m => m['vendor']));
+    const conff = JSON.parse(localStorage.getItem('sapaConfig'));
+    this.config = _.keyBy(conff, 'ID');
+	this.vendors = _.uniq(this.products.map(m => m['vendor']));
+	this.categories = JSON.parse(localStorage.getItem('SuiviDisplay')).map(m => m['name']);
+
+	const displayedByVendor = [];
+	const conf = JSON.parse(localStorage.getItem('SuiviDisplay'));
+	const obj = JSON.parse(localStorage.getItem('vendorsObjectives'));
+    const data = JSON.parse(JSON.stringify(this.products));
+	this.vendors.forEach(v => {
+		const vendor = {name: v, categories: []};
+		const t = data.filter(f => f['vendor'] === v);
+		const objectives = obj[v];
+		objectives.forEach(e => {
+			const q = this.getQuantity(e['code'], e['quantity'])
+			e['quantityEA'] = q;
+			e['OBJTTC'] = this.getTTCPrice(e['code'], q);
+			e['OBJHTC'] = this.getHTPrice(e['code'], q);
+		});
+		const e = this.getProduct(this.concatArrays(objectives, t));
+		const f = this.getCategory(e, conf);
+		vendor.categories = f;
+		displayedByVendor.push(vendor);
+		this.displayedByVendor = displayedByVendor;
+	});
+	console.log('fffff', displayedByVendor);
   }
 
-  selectVendor(event) {
-    const conf = JSON.parse(localStorage.getItem('vendorsObjectives'));
-    const data =	JSON.parse(JSON.stringify(this.products));
-    const t = data.filter(f => f['vendor'] === event.value);
+	selectVendor(event) {
+    	const conf = JSON.parse(localStorage.getItem('vendorsObjectives'));
+    	const data = JSON.parse(JSON.stringify(this.products));
+    	const t = data.filter(f => f['vendor'] === event.value);
 		const objectives = conf[event.value];
-    objectives.forEach(e => {
-      const q = this.getQuantity(e['code'], e['quantity'])
-      e['quantityEA'] = q;
-      e['OBJTTC'] = this.getTTCPrice(e['code'], q);
-      e['OBJHTC'] = this.getHTPrice(e['code'], q);
-    });
-
-    this.tab = this.getProduct(this.concatArrays(objectives, t));
-  }
+    	objectives.forEach(e => {
+      		const q = this.getQuantity(e['code'], e['quantity'])
+      		e['quantityEA'] = q;
+      		e['OBJTTC'] = this.getTTCPrice(e['code'], q);
+      		e['OBJHTC'] = this.getHTPrice(e['code'], q);
+    	});
+    	this.tab = this.getProduct(this.concatArrays(objectives, t));
+	  }
+	  
+	  selectCategory(event) {
+		const d = [];
+		this.displayedByVendor.forEach(v => {
+			const vendor = { name: v['name'], categories: {} };
+			vendor['categories'] = v['categories'].filter(f => f['name'] === event.value)[0];
+			d.push(vendor);
+		})
+		console.log('ff', d);
+		this.tab = d;
+  	}
   
-  getQuantity(id, quantity) {
+	getQuantity(id, quantity) {
 		return this.config[id].Colisage * quantity;
-  }
+	}
   
-  getTTCPrice(id, sum) {
+	getTTCPrice(id, sum) {
 		const retail = this.config[id]['prix_vente_HT'] * ((this.config[id]['tva'] / 100) + 1) ;
 		return ((retail + (retail * 1 / 100)) / this.config[id]['Colisage']) * sum;
 	}
 
 	getHTPrice(id, sum) {
 		return (this.config[id]['prix_vente_HT'] / this.config[id]['Colisage']) * sum;
-  }
+	}
+
+	chooseBy(event) {
+		if (event.value === 'CAT') {
+			this.displayBy = [true, false];
+		} else {
+			this.displayBy = [false, true];
+		}
+	}
   
   concatArrays(objectives, data) {
 
@@ -124,6 +169,35 @@ export class MonitoringByVendorComponent implements OnInit {
 			});
 		});
 		return products;
+	}
+
+	getCategory(value, category) {
+		const realization = [];
+		category.forEach(cat => {
+			const r = {
+				name: cat['name'], products: [], achievedHT: 0,
+				achievedTTC: 0, achievedCS: 0, objectiveCS: 0,
+				objectiveHT: 0, objectiveTTC: 0
+			};
+			cat['products'].forEach(pr => {
+				const found = value.filter(f => f['id'] === +pr);
+				if (found && found.length) { r['products'].push(found[0]);	}
+			});
+			r['achievedHT'] = _.reduce(r['products'].map(m => m['achievedHT']), function(a, b) { return a + b; }, 0);
+			r['achievedTTC'] = _.reduce(r['products'].map(m => m['achievedTTC']), function(a, b) { return a + b; }, 0);
+			r['achievedCS'] = _.reduce(r['products'].map(m => m['achievedCS']), function(a, b) { return a + b; }, 0);
+
+			r['objectiveCS'] = _.reduce(r['products'].map(m => m['objectiveCS']), function(a, b) { return a + b; }, 0);
+			r['objectiveHT'] = _.reduce(r['products'].map(m => m['objectiveHT']), function(a, b) { return a + b; }, 0);
+			r['objectiveTTC'] = _.reduce(r['products'].map(m => m['objectiveTTC']), function(a, b) { return a + b; }, 0);
+
+			r['progressionCS'] = ((r['achievedCS'] * 100 ) / r['objectiveCS']);
+			r['progressionNPS'] = ((r['achievedHT'] * 100) / r['objectiveHT']);
+			r['gapCS'] = r['achievedCS'] - r['objectiveCS'];
+			r['gapNPS'] = r['achievedHT'] - r['objectiveHT'];
+			realization.push(r);
+		});
+		return realization;
 	}
 
 

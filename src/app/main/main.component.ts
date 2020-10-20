@@ -27,16 +27,23 @@ export class MainComponent implements OnInit {
 			const worksheet = this.excelService.readFile(fileReader);
 			const secondws = this.readFile(fileReader, 1);
 			const thirdws = this.readFile(fileReader, 2);
+			const fourthws = this.readFile(fileReader, 3);
+
 
 			const arr = XLSX.utils.sheet_to_json(worksheet, {raw: true });
 			const secondarr = XLSX.utils.sheet_to_json(secondws, {raw: true });
 			const thirdarr = XLSX.utils.sheet_to_json(thirdws, {raw: true });
+			const fourtharr = XLSX.utils.sheet_to_json(fourthws, {raw: true });
+
+			fourtharr.map(ee => { ee['products'] = ee['products'].split('/') });
 			const t = _.groupBy(thirdarr, 'Vendors');
 
 			arr.map(m => { m['ID'] = m['ID'].toString(); });
 			localStorage.setItem('sapaConfig', JSON.stringify(arr));
 			localStorage.setItem('promoConfig', JSON.stringify(secondarr));
 			localStorage.setItem('vendorsObjectives', JSON.stringify(t));
+			localStorage.setItem('SuiviDisplay', JSON.stringify(fourtharr));
+
 
 			this.snackBar.open('Configuration saved', 'Ok', { duration : 7000 });
 		};
