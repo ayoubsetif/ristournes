@@ -301,6 +301,10 @@ export class AdminComponent implements OnInit {
 				case '12427710':
 					return 18 * Number(quantity);
 				break;
+				
+				case '12475464':
+					return 18 * Number(quantity);
+				break;
 
 				case '12351335':
 					return 120 * Number(quantity);
