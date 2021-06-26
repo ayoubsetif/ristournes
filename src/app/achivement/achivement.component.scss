@@ -1,3 +1,18 @@
 .mat-form-field {
-	width: 265px;
+	width: 300px;
+}
+.vi-btns {
+	display: flex;
+	flex-direction: row;
+	align-items: center;
+}
+.btns-wrapper {
+	display: flex;
+	flex-direction: column;
+}
+.first-btn {
+	margin-bottom: 10px;
+}
+.vi-btns button {
+    width: 250px;
 }

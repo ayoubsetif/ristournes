@@ -94,6 +94,39 @@ export class AchivementComponent implements OnInit {
 		}
 	}
 
+	uploadFileNew(event) {
+		this.file = event.target.files[0];
+		if (this.file.type !== 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet') {
+			this.snackBar.open('Wrong File Type', 'Ok', { duration : 7000 });
+		} else {
+			const fileReader = new FileReader();
+			fileReader.onload = (e) => {
+				const worksheet = this.excelService.readFile(fileReader);
+				const arr = XLSX.utils.sheet_to_json(worksheet, {raw: true });
+				const data = [];
+				_.drop(arr, 10).filter(f => f['Document Listing ']).forEach(sale => {
+					const q = this.getQuantity(sale['__EMPTY_5'], sale['__EMPTY_23'], sale['__EMPTY_24']);
+					data.push({
+						id: sale['__EMPTY_5'],
+						name: sale['__EMPTY_6'],
+						quantityEA: q,
+						quantityCS: this.getQuantityCS(sale['__EMPTY_5'], q),
+						vendor: sale['__EMPTY_8'],
+						salesmanType: sale['__EMPTY_10'],
+						transaction: sale['__EMPTY_3'],
+						transactionType: sale['__EMPTY_2'],
+						discount: sale['__EMPTY_19'],
+						TTC: this.getTTCPrice(sale['__EMPTY_5'], q),
+						HT: this.getHTPrice(sale['__EMPTY_5'], q)
+					});
+				});
+				this.data = data;
+			};
+			fileReader.readAsArrayBuffer(this.file);
+		}
+	}
+
+
 	displayAchievementByProd() {
 		const data = JSON.parse(JSON.stringify(this.data));
 		this.displayAchByProd.next(data);
@@ -220,6 +253,10 @@ export class AchivementComponent implements OnInit {
 				break;
 
 				case '12427772':
+					return 6 * Number(quantity);
+				break;
+
+				case '12475511':
 					return 6 * Number(quantity);
 				break;
 

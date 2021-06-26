@@ -1,8 +1,13 @@
 <h4 class="vs-title">Réalisation</h4>
 
 <div class="vi-btns">
-	<input hidden  type='file' #dmsbtn accept=".xlsx" (change)="uploadFile($event)">
-	<button mat-raised-button color="primary" (click)="dmsbtn.click()">Import Document Listing</button>
+	<div class="btns-wrapper">
+		<input hidden  type='file' #dmsbtn accept=".xlsx" (change)="uploadFile($event)">
+		<button class="first-btn" mat-raised-button color="primary" (click)="dmsbtn.click()">Import Document Listing</button>
+	
+		<input hidden  type='file' #dmsbtn accept=".xlsx" (change)="uploadFileNew($event)">
+		<button mat-raised-button color="primary" (click)="dmsbtn.click()">Import Document Listing (v8.7)</button>
+	</div>
 	
 	<mat-form-field>
 		<mat-select [disabled]="!data.length" (selectionChange)="display($event)"  placeholder="Choisir ...">
@@ -11,7 +16,7 @@
 			</mat-option>
 		</mat-select>
 	</mat-form-field>
-
+	
 	<button
 		class="import-config"
 		*ngIf="isAdmin"
