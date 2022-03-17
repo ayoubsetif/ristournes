@@ -1,0 +1,66 @@
+<h3>Average SKU/Invoice par client</h3>
+
+<input hidden  type='file' #cstbtn accept=".xlsx" (change)="uploadCustomerListing($event)">
+<button mat-raised-button color="primary" (click)="cstbtn.click()">Import Customer Listing</button>
+
+<input hidden  type='file' #dmsbtn accept=".xlsx" (change)="uploadFileNew($event)">
+<button mat-raised-button color="primary" (click)="dmsbtn.click()">Import Document Listing</button>
+
+<div>
+    <h4>Clients activés (Au moins une seul facture)</h4>
+    <p>Nombre total des client: {{ clientDB.length }}
+        <button
+		mat-icon-button
+		class="download"
+        [disabled]="!clientDB.length"
+		(click)="downloadClients()"
+		><mat-icon matChipRemove svgIcon="save" >Download</mat-icon></button>
+    </p> 
+    <p>nombre des clients activés: {{ customers.length }}     réellement({{ intersectionOne.length}})
+        <button
+		mat-icon-button
+		class="download"
+        [disabled]="!intersectionOne.length"
+		(click)="downloadActivatedClients()"
+		><mat-icon matChipRemove svgIcon="save" >Download</mat-icon></button>
+    </p>
+    <p>nombre des clients restants: {{ diffrenceOne.length }} 
+        <button
+		mat-icon-button
+		class="download"
+        [disabled]="!diffrenceOne.length"
+		(click)="downloadNotActivatedsClients()"
+		><mat-icon matChipRemove svgIcon="save" >Download</mat-icon></button>
+    </p>
+    <p>Pourcentage: {{ (customers.length / clientDB.length)* 100 | floor: 3 }} % </p>
+</div>
+
+<div>
+    <h4>Clients activés (Au moins 3 factures)</h4>
+    <p>Nombre total des client: {{ clientDB.length }}
+        <button
+		mat-icon-button
+		class="download"
+        [disabled]="!clientDB.length"
+		(click)="downloadClients()"
+		><mat-icon matChipRemove svgIcon="save" >Download</mat-icon></button>
+    </p> 
+    <p>nombre des clients activés: {{ customersThree.length }}     réellement({{ intersectionThree.length}})
+        <button
+		mat-icon-button
+		class="download"
+        [disabled]="!intersectionThree.length"
+		(click)="downloadActivatedClientsThreeSKU()"
+		><mat-icon matChipRemove svgIcon="save" >Download</mat-icon></button>
+    </p>
+    <p>nombre des clients restants: {{ diffrenceThree.length }} 
+        <button
+		mat-icon-button
+		class="download"
+        [disabled]="!diffrenceThree.length"
+		(click)="downloadNotActivatedsClients3SKU()"
+		><mat-icon matChipRemove svgIcon="save" >Download</mat-icon></button>
+    </p>
+    <p>Pourcentage: {{ (intersectionThree.length / clientDB.length)* 100 | floor: 3 }} % </p>
+</div>
+

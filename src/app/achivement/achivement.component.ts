@@ -59,40 +59,6 @@ export class AchivementComponent implements OnInit {
 		}
 	}
 
-	uploadFile(event) {
-		this.file = event.target.files[0];
-		if (this.file.type !== 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet') {
-			this.snackBar.open('Wrong File Type', 'Ok', { duration : 7000 });
-		} else {
-			const fileReader = new FileReader();
-			fileReader.onload = (e) => {
-				const worksheet = this.excelService.readFile(fileReader);
-				const arr = XLSX.utils.sheet_to_json(worksheet, {raw: true });
-				const data = [];
-				_.drop(arr, 12).forEach(sale => {
-					if (sale[''] !== '') {
-						const q = this.getQuantity(sale['_6'], sale['__EMPTY_9'], sale['__EMPTY_10']);
-						data.push({
-							id: sale['_6'],
-							name: sale['_7'],
-							quantityEA: q,
-							quantityCS: this.getQuantityCS(sale['_6'], q),
-							vendor: sale['_9'],
-							salesmanType: sale['_12'],
-							transaction: sale['_4'],
-							transactionType: sale['_3'],
-							discount: sale['__EMPTY_6'],
-							TTC: this.getTTCPrice(sale['_6'], q),
-							HT: this.getHTPrice(sale['_6'], q)
-						});
-					}
-				});
-				// console.log('data', data);
-				this.data = data;
-			};
-			fileReader.readAsArrayBuffer(this.file);
-		}
-	}
 
 	uploadFileNew(event) {
 		this.file = event.target.files[0];
@@ -104,8 +70,9 @@ export class AchivementComponent implements OnInit {
 				const worksheet = this.excelService.readFile(fileReader);
 				const arr = XLSX.utils.sheet_to_json(worksheet, {raw: true });
 				const data = [];
+				console.log('qqqq', _.drop(arr, 10))
 				_.drop(arr, 10).filter(f => f['Document Listing ']).forEach(sale => {
-					const q = this.getQuantity(sale['__EMPTY_5'], sale['__EMPTY_23'], sale['__EMPTY_24']);
+					const q = this.getQuantity(sale['__EMPTY_5'], sale['__EMPTY_25'], sale['__EMPTY_26']);
 					data.push({
 						id: sale['__EMPTY_5'],
 						name: sale['__EMPTY_6'],
@@ -115,11 +82,12 @@ export class AchivementComponent implements OnInit {
 						salesmanType: sale['__EMPTY_10'],
 						transaction: sale['__EMPTY_3'],
 						transactionType: sale['__EMPTY_2'],
-						discount: sale['__EMPTY_19'],
+						discount: sale['__EMPTY_20'],
 						TTC: this.getTTCPrice(sale['__EMPTY_5'], q),
 						HT: this.getHTPrice(sale['__EMPTY_5'], q)
 					});
 				});
+				console.log('data', data)
 				this.data = data;
 			};
 			fileReader.readAsArrayBuffer(this.file);

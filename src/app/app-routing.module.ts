@@ -6,6 +6,7 @@ import { AchivementComponent } from './achivement/achivement.component';
 import { AdminComponent } from './admin/admin.component';
 import { TradeTermComponent } from './trade-term/trade-term.component';
 import { SalesmanPerformanceComponent } from './salesman-performance/salesman-performance.component';
+import { ThreeSKUComponent } from './three-sku/three-sku.component';
 
 const routes: Routes = [
 	{ component: MainComponent, path : '' },
@@ -13,7 +14,8 @@ const routes: Routes = [
 	{ component: AchivementComponent, path: 'achivements' },
 	{ component: AdminComponent, path: 'admin' },
 	{ component: TradeTermComponent, path: 'trade-term' },
-	{ component: SalesmanPerformanceComponent, path: 'salesman-perfomance' }
+	{ component: SalesmanPerformanceComponent, path: 'salesman-perfomance' },
+	{ component: ThreeSKUComponent, path: '3SKU' }
 ];
 
 @NgModule({

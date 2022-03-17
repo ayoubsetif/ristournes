@@ -2,9 +2,6 @@
 
 <div class="vi-btns">
 	<div class="btns-wrapper">
-		<input hidden  type='file' #dmsbtn accept=".xlsx" (change)="uploadFile($event)">
-		<button class="first-btn" mat-raised-button color="primary" (click)="dmsbtn.click()">Import Document Listing</button>
-	
 		<input hidden  type='file' #dmsbtn accept=".xlsx" (change)="uploadFileNew($event)">
 		<button mat-raised-button color="primary" (click)="dmsbtn.click()">Import Document Listing (v8.7)</button>
 	</div>

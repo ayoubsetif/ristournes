@@ -1,25 +1,3 @@
-
-<div class="achat">
-	<h3>Les Achats</h3>
-	<div class="items">
-		<input hidden type='file' #obtn accept=".xlsx" (change)="uploadSalesFile($event)">
-		<button
-			mat-raised-button
-			color="primary"
-			(click)="obtn.click()"
-		>Importer les achats</button>
-		<mat-icon matChipRemove svgIcon="cancel" *ngIf="!achat.length" color="warn" >cancel</mat-icon>
-		<mat-icon matChipRemove svgIcon="check" *ngIf="achat.length" class="available" >check</mat-icon>
-		<button
-			mat-icon-button
-			class="download"
-			[disabled]="!achat.length"
-			(click)="downloadAchat()"
-		><mat-icon matChipRemove svgIcon="save" >save</mat-icon></button>
-	</div>
-
-
-</div>
 <div class="erp-djamel">
 	<h3>Bénéfice Sapa</h3>
 	<div class="items">

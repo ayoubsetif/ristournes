@@ -68,30 +68,29 @@ export class AdminComponent implements OnInit {
 				const worksheet = this.excelService.readFile(fileReader);
 				const arr = XLSX.utils.sheet_to_json(worksheet, {raw: true });
 				const data = [];
-				//console.log('arr', arr)
-				this.warhouse = arr[4]['_2'];
-				_.drop(arr, 12).forEach(sale => {
+				this.warhouse = arr[4]['__EMPTY_1'];
+				_.drop(arr, 10).filter(f => f['Document Listing ']).forEach(sale => {
 					if (sale[''] !== '') {
-						const q = this.getQuantity(sale['_6'], sale['__EMPTY_9'], sale['__EMPTY_10']);
-						const diff = Number(sale['__EMPTY_3'].split(',').join('')) - this.getRetailPrice(sale['_6']);
+						const q = this.getQuantity(sale['__EMPTY_5'], sale['__EMPTY_25'], sale['__EMPTY_26']);
+						const diff = Number(sale['__EMPTY_16']) - this.getRetailPrice(sale['__EMPTY_5']);
 						data.push({
-							id: sale['_6'],
-							name: sale['_7'],
+							id: sale['__EMPTY_5'],
+							name: sale['__EMPTY_6'],
 							quantityEA: q,
-							quantityCS: this.getQuantityCS(sale['_6'], q),
-							vendor: sale['_9'],
-							salesmanType: sale['_12'],
-							transaction: sale['_4'],
-							transactionType: sale['_3'],
-							TTC: this.getSTTCPrice(sale['_6'], q),
-							HT: this.getSHTPrice(sale['_6'], q),
-							basePrice: Number(sale['__EMPTY_3'].split(',').join('')),
-							retailPrice: this.getRetailPrice(sale['_6']),
+							quantityCS: this.getQuantityCS(sale['__EMPTY_5'], q),
+							vendor: sale['__EMPTY_8'],
+							salesmanType: sale['__EMPTY_10'],
+							transaction: sale['__EMPTY_3'],
+							transactionType: sale['__EMPTY_2'],
+							TTC: this.getSTTCPrice(sale['__EMPTY_5'], q),
+							HT: this.getSHTPrice(sale['__EMPTY_5'], q),
+							basePrice: Number(sale['__EMPTY_16']),
+							retailPrice: this.getRetailPrice(sale['__EMPTY_5']),
 							diffPrice: diff,
-							diffPerUnit: this.getDiffPerUnit(sale['_6'],diff),
-							discount: sale['__EMPTY_6'],
-							diffAfterDiscount: this.getDiffAfterDiscount(this.getDiffPerUnit(sale['_6'],diff), sale['__EMPTY_6'], q).diff,
-							sumAfterDiscount: this.getDiffAfterDiscount(this.getDiffPerUnit(sale['_6'],diff), sale['__EMPTY_6'], q).sum
+							diffPerUnit: this.getDiffPerUnit(sale['__EMPTY_5'],diff),
+							discount: sale['__EMPTY_20'],
+							diffAfterDiscount: this.getDiffAfterDiscount(this.getDiffPerUnit(sale['__EMPTY_5'],diff), sale['__EMPTY_20'], q).diff,
+							sumAfterDiscount: this.getDiffAfterDiscount(this.getDiffPerUnit(sale['__EMPTY_5'],diff), sale['__EMPTY_20'], q).sum
 						});
 					}
 				});
@@ -175,8 +174,6 @@ export class AdminComponent implements OnInit {
 			sum: q * diff
 		}
 	}
-
-
   }
 
   uploadERPFile(event) {
@@ -300,6 +297,14 @@ export class AdminComponent implements OnInit {
 
 				case '12427710':
 					return 18 * Number(quantity);
+				break;
+
+				case '12475511':
+					return 6 * Number(quantity);
+				break;
+
+				case '12455686':
+					return 12 * Number(quantity);
 				break;
 				
 				case '12475464':

@@ -31,6 +31,7 @@ import { DisplayByVendorComponent } from './display-by-vendor/display-by-vendor.
 import { TradeTermComponent } from './trade-term/trade-term.component';
 import { SalesmanPerformanceComponent } from './salesman-performance/salesman-performance.component';
 import { MonitoringByVendorComponent } from './monitoring-by-vendor/monitoring-by-vendor.component';
+import { ThreeSKUComponent } from './three-sku/three-sku.component';
 
 @NgModule({
 	declarations: [
@@ -50,7 +51,8 @@ import { MonitoringByVendorComponent } from './monitoring-by-vendor/monitoring-b
 		DisplayByVendorComponent,
 		TradeTermComponent,
 		SalesmanPerformanceComponent,
-		MonitoringByVendorComponent
+		MonitoringByVendorComponent,
+		ThreeSKUComponent
 	],
 	imports: [
 		BrowserModule,
